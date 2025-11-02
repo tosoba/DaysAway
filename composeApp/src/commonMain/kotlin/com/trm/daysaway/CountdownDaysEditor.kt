@@ -62,12 +62,12 @@ import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
 import com.trm.daysaway.ContinuousSelectionHelper.isInDateBetweenSelection
 import com.trm.daysaway.ContinuousSelectionHelper.isOutDateBetweenSelection
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlin.time.ExperimentalTime
 
 private val primaryColor = Color.Black.copy(alpha = 0.9f)
 private val selectionColor = primaryColor
@@ -386,14 +386,12 @@ private class HalfSizeShape(private val clipStart: Boolean) : Shape {
 fun YearMonth.displayText(short: Boolean = false): String =
   "${month.displayText(short = short)} $year"
 
-fun Month.displayText(short: Boolean = true): String = getDisplayName(short, enLocale)
+fun Month.displayText(short: Boolean = true): String = getDisplayName(short, Locale.current)
 
 fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): String =
-  getDisplayName(narrow, enLocale).let { value ->
-    if (uppercase) value.toUpperCase(enLocale) else value
+  getDisplayName(narrow, Locale.current).let { value ->
+    if (uppercase) value.toUpperCase(Locale.current) else value
   }
-
-private val enLocale = Locale("en-US")
 
 expect fun Month.getDisplayName(short: Boolean, locale: Locale): String
 
