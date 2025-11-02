@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +84,7 @@ fun CountdownDaysEditor(
   val startMonth = remember { currentMonth }
   val endMonth = remember { currentMonth.plusMonths(12) }
   val today = remember { LocalDate.now() }
-  var selection by remember { mutableStateOf(DateSelection()) }
+  var selection by rememberSaveable(saver = DateSelection.Saver) { mutableStateOf(DateSelection()) }
   val daysOfWeek = remember { daysOfWeek() }
   MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = primaryColor)) {
     Box(modifier = modifier) {
