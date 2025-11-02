@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -101,7 +103,7 @@ fun CountdownDaysEditor(
         )
         VerticalCalendar(
           state = state,
-          contentPadding = PaddingValues(bottom = 100.dp),
+          contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
           dayContent = { value ->
             Day(value, today = today, selection = selection) { day ->
               if (day.position == DayPosition.MonthDate && day.date >= today) {
@@ -143,8 +145,9 @@ private fun Day(
 ) {
   var textColor = Color.Transparent
   Box(
+    contentAlignment = Alignment.Center,
     modifier =
-      Modifier.aspectRatio(1f) // This is important for square-sizing!
+      Modifier.fillMaxSize()
         .clickable(
           enabled = day.position == DayPosition.MonthDate && day.date >= today,
           showRipple = false,
@@ -159,14 +162,18 @@ private fun Day(
         ) {
           textColor = it
         },
-    contentAlignment = Alignment.Center,
   ) {
-    Text(
-      text = day.date.day.toString(),
-      color = textColor,
-      fontSize = 16.sp,
-      fontWeight = FontWeight.Medium,
-    )
+    Box(
+      modifier = Modifier.heightIn(max = 64.dp).aspectRatio(1f),
+      contentAlignment = Alignment.Center,
+    ) {
+      Text(
+        text = day.date.day.toString(),
+        color = textColor,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium,
+      )
+    }
   }
 }
 
@@ -290,7 +297,7 @@ fun Modifier.backgroundHighlight(
   textColor: (Color) -> Unit,
 ): Modifier = composed {
   val (startDate, endDate) = selection
-  val padding = 4.dp
+  val padding = 0.dp
   when (day.position) {
     DayPosition.MonthDate -> {
       when {
@@ -375,14 +382,15 @@ private class HalfSizeShape(private val clipStart: Boolean) : Shape {
   }
 }
 
-fun YearMonth.displayText(short: Boolean = false): String = "${month.displayText(short = short)} $year"
+fun YearMonth.displayText(short: Boolean = false): String =
+  "${month.displayText(short = short)} $year"
 
 fun Month.displayText(short: Boolean = true): String = getDisplayName(short, enLocale)
 
 fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): String =
-    getDisplayName(narrow, enLocale).let { value ->
-      if (uppercase) value.toUpperCase(enLocale) else value
-    }
+  getDisplayName(narrow, enLocale).let { value ->
+    if (uppercase) value.toUpperCase(enLocale) else value
+  }
 
 private val enLocale = Locale("en-US")
 
