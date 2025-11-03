@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,12 +63,12 @@ import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
 import com.trm.daysaway.ContinuousSelectionHelper.isInDateBetweenSelection
 import com.trm.daysaway.ContinuousSelectionHelper.isOutDateBetweenSelection
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.ExperimentalTime
 
 private val primaryColor = Color.Black.copy(alpha = 0.9f)
 private val selectionColor = primaryColor
@@ -236,29 +237,41 @@ private fun CalendarTop(
         if (daysBetween == null) {
           "Select dates"
         } else {
-          // Ideally you'd do this using the strings.xml file
-          "$daysBetween ${if (daysBetween == 1) "night" else "nights"} in Munich"
+          "$daysBetween ${if (daysBetween == 1) "day" else "days"}"
         }
       Text(
-        modifier = Modifier.padding(horizontal = 14.dp),
+        modifier = Modifier.padding(horizontal = 16.dp),
         text = text,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
       )
-      Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+      Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 4.dp)) {
         for (dayOfWeek in daysOfWeek) {
-          Text(
+          FilledTonalButton(
+            onClick = {},
+            enabled = selection.startDate != null && selection.endDate != null,
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            color = Color.DarkGray,
-            text = dayOfWeek.displayText(),
-            fontSize = 15.sp,
-          )
+          ) {
+            DayOfWeekText(dayOfWeek = dayOfWeek)
+          }
+
+          Spacer(modifier = Modifier.width(4.dp))
         }
       }
     }
     HorizontalDivider()
   }
+}
+
+@Composable
+private fun DayOfWeekText(dayOfWeek: DayOfWeek, modifier: Modifier = Modifier) {
+  Text(
+    modifier = modifier,
+    textAlign = TextAlign.Center,
+    color = Color.DarkGray,
+    text = dayOfWeek.displayText(narrow = true, uppercase = true),
+    fontSize = 15.sp,
+  )
 }
 
 @Composable

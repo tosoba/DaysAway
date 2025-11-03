@@ -1,5 +1,6 @@
 package com.trm.daysaway
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -7,7 +8,6 @@ import androidx.compose.runtime.saveable.mapSaver
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.yearMonth
-import kotlin.LazyThreadSafetyMode.NONE
 
 data class DateSelection(val startDate: LocalDate? = null, val endDate: LocalDate? = null) {
   companion object {
@@ -33,14 +33,9 @@ data class DateSelection(val startDate: LocalDate? = null, val endDate: LocalDat
       )
   }
 
-  val daysBetween by
-    lazy(NONE) {
-      if (startDate == null || endDate == null) {
-        null
-      } else {
-        startDate.daysUntil(endDate)
-      }
-    }
+  val daysBetween: Int?
+    @Composable
+    get() = if (startDate == null || endDate == null) null else startDate.daysUntil(endDate)
 }
 
 private val rangeFormatter = LocalDate.Formats.ISO
