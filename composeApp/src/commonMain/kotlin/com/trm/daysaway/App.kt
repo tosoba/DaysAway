@@ -14,6 +14,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
   MaterialTheme {
-    Scaffold { CountdownDaysEditor(modifier = Modifier.fillMaxSize().background(Color.White).padding(it)) }
+    Scaffold {
+      CountdownDaysEditor(modifier = Modifier.fillMaxSize().background(Color.White).padding(it))
+    }
   }
 }
