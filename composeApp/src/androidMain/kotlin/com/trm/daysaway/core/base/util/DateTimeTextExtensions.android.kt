@@ -1,4 +1,4 @@
-package com.trm.daysaway
+package com.trm.daysaway.core.base.util
 
 import androidx.compose.ui.text.intl.Locale
 import java.time.format.TextStyle as JavaTextStyle

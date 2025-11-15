@@ -40,9 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -53,9 +51,9 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
+import com.trm.daysaway.core.base.util.displayText
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
@@ -63,12 +61,10 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
   val currentMonth = remember { YearMonth.now() }
-  val startMonth = remember { currentMonth }
-  val endMonth = remember { currentMonth.plusMonths(12) }
   val today = remember { LocalDate.now() }
   val selection =
-    rememberSaveable(saver = CountdownDaysSelection.Saver) { CountdownDaysSelection() }
-  val daysOfWeek = remember { daysOfWeek() }
+    rememberSaveable(saver = CountdownDaysSelection.Saver, init = ::CountdownDaysSelection)
+  val daysOfWeek = remember(::daysOfWeek)
 
   MaterialExpressiveTheme {
     Box(modifier = modifier) {
@@ -83,8 +79,8 @@ fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
         VerticalCalendar(
           state =
             rememberCalendarState(
-              startMonth = startMonth,
-              endMonth = endMonth,
+              startMonth = currentMonth,
+              endMonth = currentMonth.plusMonths(12),
               firstVisibleMonth = currentMonth,
               firstDayOfWeek = daysOfWeek.first(),
             ),
@@ -278,17 +274,3 @@ private fun CalendarBottom(
 private fun CountdownDaysEditorPreview() {
   CountdownDaysEditor()
 }
-
-fun YearMonth.displayText(short: Boolean = false): String =
-  "${month.displayText(short = short)} $year"
-
-fun Month.displayText(short: Boolean = true): String = getDisplayName(short, Locale.current)
-
-fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): String =
-  getDisplayName(narrow, Locale.current).let { value ->
-    if (uppercase) value.toUpperCase(Locale.current) else value
-  }
-
-expect fun Month.getDisplayName(short: Boolean, locale: Locale): String
-
-expect fun DayOfWeek.getDisplayName(narrow: Boolean = false, locale: Locale): String

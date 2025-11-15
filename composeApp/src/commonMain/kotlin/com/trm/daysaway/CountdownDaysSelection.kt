@@ -46,7 +46,7 @@ class CountdownDaysSelection(val dates: List<LocalDate> = emptyList()) {
     }
   }
 
-  companion object Companion {
+  companion object {
     val Saver: Saver<CountdownDaysSelection, *> =
       listSaver(save = { it.selectedDates.toList() }, restore = ::CountdownDaysSelection)
   }
