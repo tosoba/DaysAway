@@ -50,15 +50,15 @@ class CountdownDaysSelection(
   }
 
   fun onDateSelectionChange(date: LocalDate) {
+    val today = LocalDate.now()
     when {
       date > endDate -> {
         endDate = date
       }
       date == endDate -> {
-        val today = LocalDate.now()
         var newEndDate = endDate
         do {
-          newEndDate = newEndDate.minusDays(1)
+          newEndDate = newEndDate.minusDays(1).coerceAtLeast(today)
         } while (newEndDate > today && newEndDate in excludedDates)
         endDate = newEndDate
         excludedDates.removeAll { it > endDate }
@@ -69,16 +69,25 @@ class CountdownDaysSelection(
         }
       }
     }
+    clearSelectionIfInvalid(today)
   }
 
   fun onDayOfWeekSelectionChange(dayOfWeek: DayOfWeek, selected: Boolean) {
-    var date = LocalDate.now()
+    val today = LocalDate.now()
+    var date = today
     while (date.dayOfWeek != dayOfWeek) {
       date = date.plusDays(1)
     }
-    while (date <= endDate) {
+    while (date < endDate) {
       if (selected) excludedDates.remove(date) else excludedDates.add(date)
       date = date.plusDays(7)
+    }
+    clearSelectionIfInvalid(today)
+  }
+
+  private fun clearSelectionIfInvalid(today: LocalDate) {
+    if (endDate.toEpochDays() - today.toEpochDays() - excludedDates.size == 0L) {
+      clear()
     }
   }
 
