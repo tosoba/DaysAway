@@ -46,6 +46,19 @@ class CountdownDaysSelection(val dates: List<LocalDate> = emptyList()) {
     }
   }
 
+  fun onDayOfWeekCheckedChange(dayOfWeek: DayOfWeek, checked: Boolean) {
+    var dateToCheck = selectedDates.minBy(LocalDate::toEpochDays)
+    while (dateToCheck.dayOfWeek != dayOfWeek) {
+      dateToCheck = dateToCheck.plusDays(1)
+    }
+
+    val endDate = selectedDates.maxBy(LocalDate::toEpochDays)
+    while (dateToCheck <= endDate) {
+      if (checked) selectedDates.add(dateToCheck) else selectedDates.remove(dateToCheck)
+      dateToCheck = dateToCheck.plusDays(7)
+    }
+  }
+
   companion object {
     val Saver: Saver<CountdownDaysSelection, *> =
       listSaver(save = { it.selectedDates.toList() }, restore = ::CountdownDaysSelection)

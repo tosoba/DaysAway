@@ -218,7 +218,13 @@ private fun CalendarTop(
       Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 4.dp)) {
         for (dayOfWeek in daysOfWeek) {
           val checked = selection.containsDayOfWeek(dayOfWeek)
-          ToggleButton(checked = checked, onCheckedChange = {}, modifier = Modifier.weight(1f)) {
+          ToggleButton(
+            checked = checked,
+            onCheckedChange = {
+              selection.onDayOfWeekCheckedChange(dayOfWeek = dayOfWeek, checked = it)
+            },
+            modifier = Modifier.weight(1f),
+          ) {
             ToggleButtonText(
               text = dayOfWeek.displayText(uppercase = true, narrow = true),
               color = if (checked) Color.White else Color.DarkGray,
