@@ -28,7 +28,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
@@ -66,61 +65,59 @@ fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
     rememberSaveable(saver = CountdownDaysSelection.Saver, init = ::CountdownDaysSelection)
   val daysOfWeek = remember(::daysOfWeek)
 
-  MaterialExpressiveTheme {
-    Box(modifier = modifier) {
-      Column {
-        CalendarTop(
-          daysOfWeek = daysOfWeek,
-          selection = selection,
-          close = close,
-          clearDates = { selection.selectedDates.clear() },
-        )
-
-        VerticalCalendar(
-          state =
-            rememberCalendarState(
-              startMonth = currentMonth,
-              endMonth = currentMonth.plusMonths(12),
-              firstVisibleMonth = currentMonth,
-              firstDayOfWeek = daysOfWeek.first(),
-            ),
-          contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
-          dayContent = { value ->
-            ToggleDayButton(
-              day = value,
-              today = today,
-              selection = selection,
-              modifier =
-                Modifier.fillMaxSize()
-                  .padding(
-                    vertical = 2.dp,
-                    horizontal =
-                      if (
-                        value.date.dayOfWeek != daysOfWeek.first() &&
-                          value.date.dayOfWeek != daysOfWeek.last()
-                      ) {
-                        2.dp
-                      } else {
-                        0.dp
-                      },
-                  ),
-              onClick = { selection.onDateSelectionChange(it.date) },
-            )
-          },
-          monthHeader = { month -> MonthHeader(month) },
-        )
-      }
-
-      CalendarBottom(
-        modifier =
-          Modifier.wrapContentHeight()
-            .fillMaxWidth()
-            .background(Color.White)
-            .align(Alignment.BottomCenter),
+  Box(modifier = modifier) {
+    Column {
+      CalendarTop(
+        daysOfWeek = daysOfWeek,
         selection = selection,
-        save = {},
+        close = close,
+        clearDates = selection.selectedDates::clear,
+      )
+
+      VerticalCalendar(
+        state =
+          rememberCalendarState(
+            startMonth = currentMonth,
+            endMonth = currentMonth.plusMonths(12),
+            firstVisibleMonth = currentMonth,
+            firstDayOfWeek = daysOfWeek.first(),
+          ),
+        contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
+        dayContent = { day ->
+          ToggleDayButton(
+            day = day,
+            today = today,
+            selection = selection,
+            modifier =
+              Modifier.fillMaxSize()
+                .padding(
+                  vertical = 2.dp,
+                  horizontal =
+                    if (
+                      day.date.dayOfWeek != daysOfWeek.first() &&
+                        day.date.dayOfWeek != daysOfWeek.last()
+                    ) {
+                      2.dp
+                    } else {
+                      0.dp
+                    },
+                ),
+            onClick = { selection.onDateSelectionChange(it.date) },
+          )
+        },
+        monthHeader = { month -> MonthHeader(month) },
       )
     }
+
+    CalendarBottom(
+      modifier =
+        Modifier.wrapContentHeight()
+          .fillMaxWidth()
+          .background(Color.White)
+          .align(Alignment.BottomCenter),
+      selection = selection,
+      save = {},
+    )
   }
 }
 
