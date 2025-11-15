@@ -1,7 +1,8 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class)
+
 package com.trm.daysaway
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,20 +40,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -63,8 +56,6 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
-import com.trm.daysaway.ContinuousSelectionHelper.isInDateBetweenSelection
-import com.trm.daysaway.ContinuousSelectionHelper.isOutDateBetweenSelection
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -72,11 +63,6 @@ import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 
-private val primaryColor = Color.Black.copy(alpha = 0.9f)
-private val selectionColor = primaryColor
-private val continuousSelectionColor = Color.LightGray.copy(alpha = 0.3f)
-
-@OptIn(ExperimentalTime::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CountdownDaysEditor(
   modifier: Modifier = Modifier,
@@ -93,28 +79,46 @@ fun CountdownDaysEditor(
   MaterialExpressiveTheme {
     Box(modifier = modifier) {
       Column {
-        val state =
-          rememberCalendarState(
-            startMonth = startMonth,
-            endMonth = endMonth,
-            firstVisibleMonth = currentMonth,
-            firstDayOfWeek = daysOfWeek.first(),
-          )
         CalendarTop(
           daysOfWeek = daysOfWeek,
           selection = selection,
           close = close,
           clearDates = { selection = DateSelection() },
         )
+
         VerticalCalendar(
-          state = state,
+          state =
+            rememberCalendarState(
+              startMonth = startMonth,
+              endMonth = endMonth,
+              firstVisibleMonth = currentMonth,
+              firstDayOfWeek = daysOfWeek.first(),
+            ),
           contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
           dayContent = { value ->
-            Day(value, today = today, selection = selection) { day ->
-              if (day.position == DayPosition.MonthDate && day.date >= today) {
+            ToggleDayButton(
+              day = value,
+              today = today,
+              selection = selection,
+              modifier =
+                Modifier.fillMaxSize()
+                  .padding(
+                    vertical = 2.dp,
+                    horizontal =
+                      if (
+                        value.date.dayOfWeek != daysOfWeek.first() &&
+                          value.date.dayOfWeek != daysOfWeek.last()
+                      ) {
+                        2.dp
+                      } else {
+                        0.dp
+                      },
+                  ),
+            ) {
+              if (it.position == DayPosition.MonthDate && it.date >= today) {
                 selection =
                   ContinuousSelectionHelper.getSelection(
-                    clickedDate = day.date,
+                    clickedDate = it.date,
                     dateSelection = selection,
                   )
               }
@@ -142,41 +146,33 @@ fun CountdownDaysEditor(
 }
 
 @Composable
-private fun Day(
+private fun ToggleDayButton(
   day: CalendarDay,
   today: LocalDate,
   selection: DateSelection,
+  modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit,
 ) {
-  var textColor = Color.Transparent
-  Box(
-    contentAlignment = Alignment.Center,
-    modifier =
-      Modifier.fillMaxSize()
-        .clickable(
-          enabled = day.position == DayPosition.MonthDate && day.date >= today,
-          showRipple = false,
-          onClick = { onClick(day) },
-        )
-        .backgroundHighlight(
-          day = day,
-          today = today,
-          selection = selection,
-          selectionColor = selectionColor,
-          continuousSelectionColor = continuousSelectionColor,
-        ) {
-          textColor = it
-        },
+  if (day.position != DayPosition.MonthDate) return
+
+  val enabled = day.position == DayPosition.MonthDate && day.date >= today
+  val inSelection =
+    day.date == selection.startDate ||
+      day.date == selection.endDate ||
+      (selection.startDate != null &&
+        selection.endDate != null &&
+        day.date in selection.startDate..selection.endDate)
+
+  ToggleButton(
+    enabled = enabled,
+    checked = enabled && inSelection,
+    modifier = modifier,
+    onCheckedChange = { onClick(day) },
   ) {
-    Box(
-      modifier = Modifier.heightIn(max = 64.dp).aspectRatio(1f),
-      contentAlignment = Alignment.Center,
-    ) {
-      Text(
+    Box(modifier = Modifier.heightIn(max = 64.dp), contentAlignment = Alignment.Center) {
+      ToggleButtonText(
         text = day.date.day.toString(),
-        color = textColor,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Medium,
+        color = if (enabled && inSelection) Color.White else Color.DarkGray,
       )
     }
   }
@@ -197,7 +193,6 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
   }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CalendarTop(
   modifier: Modifier = Modifier,
@@ -258,8 +253,8 @@ private fun CalendarTop(
             enabled = enabled,
             modifier = Modifier.weight(1f),
           ) {
-            DayOfWeekText(
-              dayOfWeek = dayOfWeek,
+            ToggleButtonText(
+              text = dayOfWeek.displayText(uppercase = true, narrow = true),
               color = if (enabled) Color.White else Color.DarkGray,
             )
           }
@@ -273,12 +268,12 @@ private fun CalendarTop(
 }
 
 @Composable
-private fun DayOfWeekText(dayOfWeek: DayOfWeek, color: Color, modifier: Modifier = Modifier) {
+private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Modifier) {
   Text(
     modifier = modifier,
     textAlign = TextAlign.Center,
     color = color,
-    text = dayOfWeek.displayText(narrow = true, uppercase = true),
+    text = text,
     style = MaterialTheme.typography.labelLarge,
   )
 }
@@ -309,100 +304,6 @@ private fun CalendarBottom(
 @Composable
 private fun CountdownDaysEditorPreview() {
   CountdownDaysEditor()
-}
-
-fun Modifier.backgroundHighlight(
-  day: CalendarDay,
-  today: LocalDate,
-  selection: DateSelection,
-  selectionColor: Color,
-  continuousSelectionColor: Color,
-  textColor: (Color) -> Unit,
-): Modifier = composed {
-  val (startDate, endDate) = selection
-  val padding = 0.dp
-  when (day.position) {
-    DayPosition.MonthDate -> {
-      when {
-        day.date < today -> {
-          textColor(Colors.example4GrayPast)
-          this
-        }
-        startDate == day.date && endDate == null -> {
-          textColor(Color.White)
-          padding(padding).background(color = selectionColor, shape = CircleShape)
-        }
-        day.date == startDate -> {
-          textColor(Color.White)
-          padding(vertical = padding)
-            .background(color = continuousSelectionColor, shape = HalfSizeShape(clipStart = true))
-            .padding(horizontal = padding)
-            .background(color = selectionColor, shape = CircleShape)
-        }
-        startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
-          textColor(Colors.example4Gray)
-          padding(vertical = padding).background(color = continuousSelectionColor)
-        }
-        day.date == endDate -> {
-          textColor(Color.White)
-          padding(vertical = padding)
-            .background(color = continuousSelectionColor, shape = HalfSizeShape(clipStart = false))
-            .padding(horizontal = padding)
-            .background(color = selectionColor, shape = CircleShape)
-        }
-        day.date == today -> {
-          textColor(Colors.example4Gray)
-          padding(padding)
-            .border(width = 1.dp, shape = CircleShape, color = Colors.example4GrayPast)
-        }
-        else -> {
-          textColor(Colors.example4Gray)
-          this
-        }
-      }
-    }
-    DayPosition.InDate -> {
-      textColor(Color.Transparent)
-      if (
-        startDate != null &&
-          endDate != null &&
-          isInDateBetweenSelection(day.date, startDate, endDate)
-      ) {
-        padding(vertical = padding).background(color = continuousSelectionColor)
-      } else {
-        this
-      }
-    }
-    DayPosition.OutDate -> {
-      textColor(Color.Transparent)
-      if (
-        startDate != null &&
-          endDate != null &&
-          isOutDateBetweenSelection(day.date, startDate, endDate)
-      ) {
-        padding(vertical = padding).background(color = continuousSelectionColor)
-      } else {
-        this
-      }
-    }
-  }
-}
-
-private class HalfSizeShape(private val clipStart: Boolean) : Shape {
-  override fun createOutline(
-    size: Size,
-    layoutDirection: LayoutDirection,
-    density: Density,
-  ): Outline {
-    val half = size.width / 2f
-    val offset =
-      if (layoutDirection == LayoutDirection.Ltr) {
-        if (clipStart) Offset(half, 0f) else Offset.Zero
-      } else {
-        if (clipStart) Offset.Zero else Offset(half, 0f)
-      }
-    return Outline.Rectangle(Rect(offset, Size(half, size.height)))
-  }
 }
 
 fun YearMonth.displayText(short: Boolean = false): String =
