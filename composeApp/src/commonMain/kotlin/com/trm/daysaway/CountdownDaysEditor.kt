@@ -49,7 +49,7 @@ import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
-import com.kizitonwose.calendar.core.plusMonths
+import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -78,7 +78,7 @@ fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
         state =
           rememberCalendarState(
             startMonth = currentMonth,
-            endMonth = currentMonth.plusMonths(12),
+            endMonth = currentMonth.plusYears(100),
             firstVisibleMonth = currentMonth,
             firstDayOfWeek = daysOfWeek.first(),
           ),
