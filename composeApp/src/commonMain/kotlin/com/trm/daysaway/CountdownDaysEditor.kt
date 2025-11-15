@@ -33,11 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,16 +61,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun CountdownDaysEditor(
-  modifier: Modifier = Modifier,
-  close: () -> Unit = {},
-  dateSelected: (startDate: LocalDate, endDate: LocalDate) -> Unit = { _, _ -> },
-) {
+fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
   val currentMonth = remember { YearMonth.now() }
   val startMonth = remember { currentMonth }
   val endMonth = remember { currentMonth.plusMonths(12) }
   val today = remember { LocalDate.now() }
-  var selection by rememberSaveable(saver = DateSelection.Saver) { mutableStateOf(DateSelection()) }
+  val selection =
+    rememberSaveable(saver = CountdownDaysSelection.Saver) { CountdownDaysSelection() }
   val daysOfWeek = remember { daysOfWeek() }
 
   MaterialExpressiveTheme {
@@ -83,7 +77,7 @@ fun CountdownDaysEditor(
           daysOfWeek = daysOfWeek,
           selection = selection,
           close = close,
-          clearDates = { selection = DateSelection() },
+          clearDates = { selection.selectedDates.clear() },
         )
 
         VerticalCalendar(
@@ -114,19 +108,13 @@ fun CountdownDaysEditor(
                         0.dp
                       },
                   ),
-            ) {
-              if (it.position == DayPosition.MonthDate && it.date >= today) {
-                selection =
-                  ContinuousSelectionHelper.getSelection(
-                    clickedDate = it.date,
-                    dateSelection = selection,
-                  )
-              }
-            }
+              onClick = { selection.onDateSelectionChange(it.date) },
+            )
           },
           monthHeader = { month -> MonthHeader(month) },
         )
       }
+
       CalendarBottom(
         modifier =
           Modifier.wrapContentHeight()
@@ -134,12 +122,7 @@ fun CountdownDaysEditor(
             .background(Color.White)
             .align(Alignment.BottomCenter),
         selection = selection,
-        save = {
-          val (startDate, endDate) = selection
-          if (startDate != null && endDate != null) {
-            dateSelected(startDate, endDate)
-          }
-        },
+        save = {},
       )
     }
   }
@@ -149,19 +132,14 @@ fun CountdownDaysEditor(
 private fun ToggleDayButton(
   day: CalendarDay,
   today: LocalDate,
-  selection: DateSelection,
+  selection: CountdownDaysSelection,
   modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit,
 ) {
   if (day.position != DayPosition.MonthDate) return
 
   val enabled = day.position == DayPosition.MonthDate && day.date >= today
-  val inSelection =
-    day.date == selection.startDate ||
-      day.date == selection.endDate ||
-      (selection.startDate != null &&
-        selection.endDate != null &&
-        day.date in selection.startDate..selection.endDate)
+  val inSelection = selection.selectedDates.contains(day.date)
 
   ToggleButton(
     enabled = enabled,
@@ -197,7 +175,7 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
 private fun CalendarTop(
   modifier: Modifier = Modifier,
   daysOfWeek: List<DayOfWeek>,
-  selection: DateSelection,
+  selection: CountdownDaysSelection,
   close: () -> Unit,
   clearDates: () -> Unit,
 ) {
@@ -231,7 +209,7 @@ private fun CalendarTop(
           textAlign = TextAlign.End,
         )
       }
-      val daysBetween = selection.daysBetween
+      val daysBetween = selection.selectedDates.size.takeIf { it > 0 }
       val text =
         if (daysBetween == null) {
           "Select dates"
@@ -246,16 +224,11 @@ private fun CalendarTop(
       )
       Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 4.dp)) {
         for (dayOfWeek in daysOfWeek) {
-          val enabled = selection.startDate != null && selection.endDate != null
-          ToggleButton(
-            checked = enabled,
-            onCheckedChange = {},
-            enabled = enabled,
-            modifier = Modifier.weight(1f),
-          ) {
+          val checked = selection.containsDayOfWeek(dayOfWeek)
+          ToggleButton(checked = checked, onCheckedChange = {}, modifier = Modifier.weight(1f)) {
             ToggleButtonText(
               text = dayOfWeek.displayText(uppercase = true, narrow = true),
-              color = if (enabled) Color.White else Color.DarkGray,
+              color = if (checked) Color.White else Color.DarkGray,
             )
           }
 
@@ -281,7 +254,7 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 @Composable
 private fun CalendarBottom(
   modifier: Modifier = Modifier,
-  selection: DateSelection,
+  selection: CountdownDaysSelection,
   save: () -> Unit,
 ) {
   Column(modifier.fillMaxWidth()) {
@@ -292,7 +265,7 @@ private fun CalendarBottom(
       Button(
         modifier = Modifier.height(40.dp).width(100.dp),
         onClick = save,
-        enabled = selection.daysBetween != null,
+        enabled = selection.selectedDates.size > 1,
       ) {
         Text(text = "Save")
       }
