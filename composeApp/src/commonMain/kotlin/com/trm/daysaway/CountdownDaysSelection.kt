@@ -22,7 +22,7 @@ class CountdownDaysSelection(val dates: List<LocalDate> = emptyList()) {
     when {
       selectedDates.isEmpty() -> selectedDates.add(date)
       selectedDates.size == 1 -> {
-        if (date < selectedDates.first()) {
+        if (date <= selectedDates.first()) {
           selectedDates.clear()
           selectedDates.add(date)
         } else {
