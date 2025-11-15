@@ -58,7 +58,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
+fun CountdownDaysEditor(modifier: Modifier = Modifier, onCloseClick: () -> Unit = {}) {
   val currentMonth = remember { YearMonth.now() }
   val today = remember { LocalDate.now() }
   val selection =
@@ -70,8 +70,8 @@ fun CountdownDaysEditor(modifier: Modifier = Modifier, close: () -> Unit = {}) {
       CalendarTop(
         daysOfWeek = daysOfWeek,
         selection = selection,
-        close = close,
-        clearDates = selection.selectedDates::clear,
+        onCloseClick = onCloseClick,
+        onClearClick = selection::clear,
       )
 
       VerticalCalendar(
@@ -132,18 +132,18 @@ private fun ToggleDayButton(
   if (day.position != DayPosition.MonthDate) return
 
   val enabled = day.position == DayPosition.MonthDate && day.date >= today
-  val inSelection = selection.selectedDates.contains(day.date)
+  val selected = selection.isDateSelected(day.date)
 
   ToggleButton(
     enabled = enabled,
-    checked = enabled && inSelection,
+    checked = enabled && selected,
     modifier = modifier,
     onCheckedChange = { onClick(day) },
   ) {
     Box(modifier = Modifier.heightIn(max = 64.dp), contentAlignment = Alignment.Center) {
       ToggleButtonText(
         text = day.date.day.toString(),
-        color = if (enabled && inSelection) Color.White else Color.DarkGray,
+        color = if (enabled && selected) Color.White else Color.DarkGray,
       )
     }
   }
@@ -169,8 +169,8 @@ private fun CalendarTop(
   modifier: Modifier = Modifier,
   daysOfWeek: List<DayOfWeek>,
   selection: CountdownDaysSelection,
-  close: () -> Unit,
-  clearDates: () -> Unit,
+  onCloseClick: () -> Unit,
+  onClearClick: () -> Unit,
 ) {
   Column(modifier.fillMaxWidth()) {
     Column(
@@ -186,7 +186,7 @@ private fun CalendarTop(
             Modifier.fillMaxHeight()
               .aspectRatio(1f)
               .clip(CircleShape)
-              .clickable(onClick = close)
+              .clickable(onClick = onCloseClick)
               .padding(12.dp),
           imageVector = Icons.Default.Close,
           contentDescription = "Close",
@@ -195,19 +195,19 @@ private fun CalendarTop(
         Text(
           modifier =
             Modifier.clip(RoundedCornerShape(percent = 50))
-              .clickable(onClick = clearDates)
+              .clickable(onClick = onClearClick)
               .padding(horizontal = 16.dp, vertical = 8.dp),
           text = "Clear",
           fontWeight = FontWeight.Medium,
           textAlign = TextAlign.End,
         )
       }
-      val daysBetween = selection.selectedDates.size.takeIf { it > 0 }
+      val daysBetween = selection.daysBetween.takeIf { it > 0 }
       val text =
         if (daysBetween == null) {
           "Select dates"
         } else {
-          "$daysBetween ${if (daysBetween == 1) "day" else "days"}"
+          "$daysBetween ${if (daysBetween == 1L) "day" else "days"}"
         }
       Text(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -221,7 +221,7 @@ private fun CalendarTop(
           ToggleButton(
             checked = checked,
             onCheckedChange = {
-              selection.onDayOfWeekCheckedChange(dayOfWeek = dayOfWeek, checked = it)
+              selection.onDayOfWeekSelectionChange(dayOfWeek = dayOfWeek, selected = it)
             },
             modifier = Modifier.weight(1f),
           ) {
@@ -264,7 +264,7 @@ private fun CalendarBottom(
       Button(
         modifier = Modifier.height(40.dp).width(100.dp),
         onClick = save,
-        enabled = selection.selectedDates.size > 1,
+        enabled = selection.isValid,
       ) {
         Text(text = "Save")
       }
