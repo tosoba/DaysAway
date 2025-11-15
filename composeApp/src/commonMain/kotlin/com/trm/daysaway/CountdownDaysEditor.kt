@@ -24,11 +24,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,7 +76,7 @@ private val primaryColor = Color.Black.copy(alpha = 0.9f)
 private val selectionColor = primaryColor
 private val continuousSelectionColor = Color.LightGray.copy(alpha = 0.3f)
 
-@OptIn(ExperimentalTime::class)
+@OptIn(ExperimentalTime::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CountdownDaysEditor(
   modifier: Modifier = Modifier,
@@ -87,7 +89,8 @@ fun CountdownDaysEditor(
   val today = remember { LocalDate.now() }
   var selection by rememberSaveable(saver = DateSelection.Saver) { mutableStateOf(DateSelection()) }
   val daysOfWeek = remember { daysOfWeek() }
-  MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = primaryColor)) {
+
+  MaterialExpressiveTheme {
     Box(modifier = modifier) {
       Column {
         val state =
@@ -194,6 +197,7 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
   }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CalendarTop(
   modifier: Modifier = Modifier,
@@ -247,12 +251,17 @@ private fun CalendarTop(
       )
       Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 4.dp)) {
         for (dayOfWeek in daysOfWeek) {
-          FilledTonalButton(
-            onClick = {},
-            enabled = selection.startDate != null && selection.endDate != null,
+          val enabled = selection.startDate != null && selection.endDate != null
+          ToggleButton(
+            checked = enabled,
+            onCheckedChange = {},
+            enabled = enabled,
             modifier = Modifier.weight(1f),
           ) {
-            DayOfWeekText(dayOfWeek = dayOfWeek)
+            DayOfWeekText(
+              dayOfWeek = dayOfWeek,
+              color = if (enabled) Color.White else Color.DarkGray,
+            )
           }
 
           Spacer(modifier = Modifier.width(4.dp))
@@ -264,13 +273,13 @@ private fun CalendarTop(
 }
 
 @Composable
-private fun DayOfWeekText(dayOfWeek: DayOfWeek, modifier: Modifier = Modifier) {
+private fun DayOfWeekText(dayOfWeek: DayOfWeek, color: Color, modifier: Modifier = Modifier) {
   Text(
     modifier = modifier,
     textAlign = TextAlign.Center,
-    color = Color.DarkGray,
+    color = color,
     text = dayOfWeek.displayText(narrow = true, uppercase = true),
-    fontSize = 15.sp,
+    style = MaterialTheme.typography.labelLarge,
   )
 }
 
