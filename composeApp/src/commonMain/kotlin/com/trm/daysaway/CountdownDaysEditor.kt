@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -131,6 +132,8 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
         selection = selection,
         modifier = Modifier.fillMaxWidth().padding(8.dp),
       )
+
+      HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
       VerticalCalendar(
         modifier = Modifier.fillMaxWidth().weight(1f),
