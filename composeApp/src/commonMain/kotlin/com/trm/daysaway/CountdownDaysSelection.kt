@@ -13,9 +13,9 @@ import androidx.compose.runtime.setValue
 import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlin.time.ExperimentalTime
 
 @Stable
 class CountdownDaysSelection(
@@ -34,7 +34,7 @@ class CountdownDaysSelection(
   val isValid: Boolean
     @Composable get() = endDate != LocalDate.now()
 
-  fun clear() {
+  fun reset() {
     endDate = LocalDate.now()
     excludedDates.clear()
   }
@@ -69,7 +69,7 @@ class CountdownDaysSelection(
         }
       }
     }
-    clearSelectionIfInvalid(today)
+    resetSelectionIfInvalid(today)
   }
 
   fun onDayOfWeekSelectionChange(dayOfWeek: DayOfWeek, selected: Boolean) {
@@ -82,12 +82,12 @@ class CountdownDaysSelection(
       if (selected) excludedDates.remove(date) else excludedDates.add(date)
       date = date.plusDays(7)
     }
-    clearSelectionIfInvalid(today)
+    resetSelectionIfInvalid(today)
   }
 
-  private fun clearSelectionIfInvalid(today: LocalDate) {
+  private fun resetSelectionIfInvalid(today: LocalDate) {
     if (endDate.toEpochDays() - today.toEpochDays() - excludedDates.size == 0L) {
-      clear()
+      reset()
     }
   }
 
