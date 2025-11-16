@@ -2,7 +2,6 @@
 
 package com.trm.daysaway
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -65,58 +62,46 @@ fun CountdownDaysEditor(modifier: Modifier = Modifier, onCloseClick: () -> Unit 
     rememberSaveable(saver = CountdownDaysSelection.Saver, init = ::CountdownDaysSelection)
   val daysOfWeek = remember(::daysOfWeek)
 
-  Box(modifier = modifier) {
-    Column {
-      CalendarTop(
-        daysOfWeek = daysOfWeek,
-        selection = selection,
-        onCloseClick = onCloseClick,
-        onClearClick = selection::clear,
-      )
-
-      VerticalCalendar(
-        state =
-          rememberCalendarState(
-            startMonth = currentMonth,
-            endMonth = currentMonth.plusYears(100),
-            firstVisibleMonth = currentMonth,
-            firstDayOfWeek = daysOfWeek.first(),
-          ),
-        contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
-        dayContent = { day ->
-          ToggleDayButton(
-            day = day,
-            today = today,
-            selection = selection,
-            modifier =
-              Modifier.fillMaxSize()
-                .padding(
-                  vertical = 2.dp,
-                  horizontal =
-                    if (
-                      day.date.dayOfWeek != daysOfWeek.first() &&
-                        day.date.dayOfWeek != daysOfWeek.last()
-                    ) {
-                      2.dp
-                    } else {
-                      0.dp
-                    },
-                ),
-            onClick = { selection.onDateSelectionChange(it.date) },
-          )
-        },
-        monthHeader = { month -> MonthHeader(month) },
-      )
-    }
-
-    CalendarBottom(
-      modifier =
-        Modifier.wrapContentHeight()
-          .fillMaxWidth()
-          .background(Color.White)
-          .align(Alignment.BottomCenter),
+  Column(modifier = modifier) {
+    CalendarTop(
+      daysOfWeek = daysOfWeek,
       selection = selection,
-      save = {},
+      onCloseClick = onCloseClick,
+      onClearClick = selection::clear,
+    )
+
+    VerticalCalendar(
+      state =
+        rememberCalendarState(
+          startMonth = currentMonth,
+          endMonth = currentMonth.plusYears(100),
+          firstVisibleMonth = currentMonth,
+          firstDayOfWeek = daysOfWeek.first(),
+        ),
+      contentPadding = PaddingValues(bottom = 100.dp, start = 8.dp, end = 8.dp),
+      dayContent = { day ->
+        ToggleDayButton(
+          day = day,
+          today = today,
+          selection = selection,
+          modifier =
+            Modifier.fillMaxSize()
+              .padding(
+                vertical = 2.dp,
+                horizontal =
+                  if (
+                    day.date.dayOfWeek != daysOfWeek.first() &&
+                      day.date.dayOfWeek != daysOfWeek.last()
+                  ) {
+                    2.dp
+                  } else {
+                    0.dp
+                  },
+              ),
+          onClick = { selection.onDateSelectionChange(it.date) },
+        )
+      },
+      monthHeader = { month -> MonthHeader(month) },
     )
   }
 }
@@ -248,28 +233,6 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
     text = text,
     style = MaterialTheme.typography.labelLarge,
   )
-}
-
-@Composable
-private fun CalendarBottom(
-  modifier: Modifier = Modifier,
-  selection: CountdownDaysSelection,
-  save: () -> Unit,
-) {
-  Column(modifier.fillMaxWidth()) {
-    HorizontalDivider()
-    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-      Text(text = "€75 night", fontWeight = FontWeight.Bold)
-      Spacer(modifier = Modifier.weight(1f))
-      Button(
-        modifier = Modifier.height(40.dp).width(100.dp),
-        onClick = save,
-        enabled = selection.isValid,
-      ) {
-        Text(text = "Save")
-      }
-    }
-  }
 }
 
 @Preview(showBackground = true)
