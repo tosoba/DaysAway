@@ -126,7 +126,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
     },
   ) { contentPadding ->
     Column(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
-      DaysOfWeekSelection(
+      DayOfWeekToggleButtons(
         daysOfWeek = daysOfWeek,
         selection = selection,
         modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -143,7 +143,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
           ),
         contentPadding = PaddingValues(horizontal = 8.dp),
         dayContent = { day ->
-          ToggleDayButton(
+          DayToggleButton(
             day = day,
             today = today,
             selection = selection,
@@ -171,7 +171,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
 }
 
 @Composable
-private fun ToggleDayButton(
+private fun DayToggleButton(
   day: CalendarDay,
   today: LocalDate,
   selection: CountdownDaysSelection,
@@ -214,13 +214,13 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
 }
 
 @Composable
-private fun DaysOfWeekSelection(
+private fun DayOfWeekToggleButtons(
   daysOfWeek: List<DayOfWeek>,
   selection: CountdownDaysSelection,
   modifier: Modifier = Modifier,
 ) {
   Row(modifier = modifier) {
-    for (dayOfWeek in daysOfWeek) {
+    daysOfWeek.forEachIndexed { index, dayOfWeek ->
       val checked = selection.containsDayOfWeek(dayOfWeek)
 
       ToggleButton(
@@ -236,7 +236,9 @@ private fun DaysOfWeekSelection(
         )
       }
 
-      Spacer(modifier = Modifier.width(4.dp))
+      if (index != daysOfWeek.lastIndex) {
+        Spacer(modifier = Modifier.width(4.dp))
+      }
     }
   }
 }
