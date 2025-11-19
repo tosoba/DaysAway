@@ -21,6 +21,8 @@ kotlin {
     androidMain.dependencies {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
+      implementation(libs.androidx.glance.appwidget)
+      implementation(libs.androidx.glance.material3)
     }
 
     commonMain.dependencies {
