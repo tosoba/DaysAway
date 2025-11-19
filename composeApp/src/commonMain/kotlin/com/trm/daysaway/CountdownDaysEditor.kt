@@ -140,7 +140,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
         state =
           rememberCalendarState(
             startMonth = currentMonth,
-            endMonth = currentMonth.plusYears(1),
+            endMonth = currentMonth.plusYears(100),
             firstVisibleMonth = currentMonth,
             firstDayOfWeek = daysOfWeek.first(),
           ),
