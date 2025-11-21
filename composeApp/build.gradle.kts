@@ -5,6 +5,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
+  alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -26,22 +27,25 @@ kotlin {
     }
 
     commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(libs.material3)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
-      implementation(compose.components.uiToolingPreview)
+      implementation(libs.common.compose.components.resources)
+      implementation(libs.common.compose.ui.toolingPreview)
+      implementation(libs.common.compose.foundation)
+      implementation(libs.common.compose.material3)
+      implementation(libs.common.compose.runtime)
+      implementation(libs.common.compose.ui)
 
-      implementation(libs.androidx.lifecycle.viewmodelCompose)
-      implementation(libs.androidx.lifecycle.runtimeCompose)
+      implementation(libs.common.lifecycle.runtimeCompose)
+      implementation(libs.common.lifecycle.viewModelNavigation3)
 
-      implementation(libs.calendar.composeMultiplatform)
-      implementation(libs.kotlinx.datetime)
-      implementation(libs.material.icons)
+      implementation(libs.common.navigation3.ui)
+
+      implementation(libs.common.calendar)
+      implementation(libs.common.kotlinx.datetime)
+      implementation(libs.common.kotlinx.serializationJson)
+      implementation(libs.common.material.icons)
     }
 
-    commonTest.dependencies { implementation(libs.kotlin.test) }
+    commonTest.dependencies { implementation(libs.common.kotlin.test) }
   }
 }
 

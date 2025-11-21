@@ -4,7 +4,7 @@
   ExperimentalMaterial3Api::class,
 )
 
-package com.trm.daysaway
+package com.trm.daysaway.ui.widget
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -58,15 +59,13 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.format
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
+fun WidgetScreen(onBackClick: () -> Unit = {}) {
   val currentMonth = remember { YearMonth.now() }
   val today = remember { LocalDate.now() }
-  val selection =
-    rememberSaveable(saver = CountdownDaysSelection.Saver, init = ::CountdownDaysSelection)
+  val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
   val daysOfWeek = remember(::daysOfWeek)
 
   val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -75,15 +74,15 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
     modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     topBar = {
       TwoRowsTopAppBar(
-        title = { Text(if (selection.isValid) "Confirm selection" else "Choose a target date") },
+        title = { Text(if (state.selectionValid) "Confirm selection" else "Choose a target date") },
         subtitle = {
-          val daysRemaining = selection.daysBetween.takeIf { it > 0 }
+          val daysRemaining = state.daysBetween.takeIf { it > 0 }
           Text(
             text =
               if (daysRemaining == null) {
                 "No target date chosen"
               } else {
-                "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${selection.endDate.format(LocalDate.Formats.ISO)}"
+                "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${state.endDate.format(LocalDate.Formats.ISO)}"
               }
           )
         },
@@ -109,8 +108,8 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
         val buttonHeight = ButtonDefaults.MediumContainerHeight
 
         TextButton(
-          enabled = selection.isValid,
-          onClick = selection::reset,
+          enabled = state.selectionValid,
+          onClick = state::reset,
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
@@ -120,7 +119,7 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-          enabled = selection.isValid,
+          enabled = state.selectionValid,
           onClick = {},
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
@@ -135,7 +134,7 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
     Column(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
       DayOfWeekToggleButtons(
         daysOfWeek = daysOfWeek,
-        selection = selection,
+        selection = state,
         modifier = Modifier.fillMaxWidth().padding(8.dp),
       )
 
@@ -156,7 +155,7 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
           DayToggleButton(
             day = day,
             today = today,
-            selection = selection,
+            selection = state,
             modifier =
               Modifier.fillMaxSize()
                 .padding(
@@ -168,7 +167,7 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
                       0.dp
                     },
                 ),
-            onClick = { selection.onDateSelectionChange(it.date) },
+            onClick = { state.onDateSelectionChange(it.date) },
           )
         },
         monthHeader = { month -> MonthHeader(month) },
@@ -181,7 +180,7 @@ fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
 private fun DayToggleButton(
   day: CalendarDay,
   today: LocalDate,
-  selection: CountdownDaysSelection,
+  selection: WidgetScreenState,
   modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit,
 ) {
@@ -223,7 +222,7 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
 @Composable
 private fun DayOfWeekToggleButtons(
   daysOfWeek: List<DayOfWeek>,
-  selection: CountdownDaysSelection,
+  selection: WidgetScreenState,
   modifier: Modifier = Modifier,
 ) {
   Row(modifier = modifier) {
@@ -263,6 +262,6 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 
 @Preview(showBackground = true)
 @Composable
-private fun CountdownDaysEditorPreview() {
-  CountdownDaysEditor()
+private fun WidgetScreenPreview() {
+  WidgetScreen()
 }

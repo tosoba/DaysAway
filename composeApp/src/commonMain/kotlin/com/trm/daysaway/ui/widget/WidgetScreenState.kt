@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.trm.daysaway
+package com.trm.daysaway.ui.widget
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -13,12 +13,12 @@ import androidx.compose.runtime.setValue
 import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlin.time.ExperimentalTime
 
 @Stable
-class CountdownDaysSelection(
+class WidgetScreenState(
   endDate: LocalDate = LocalDate.now(),
   excludedDays: List<LocalDate> = emptyList(),
 ) {
@@ -31,7 +31,7 @@ class CountdownDaysSelection(
   val daysBetween: Long
     @Composable get() = endDate.toEpochDays() - LocalDate.now().toEpochDays() - excludedDates.size
 
-  val isValid: Boolean
+  val selectionValid: Boolean
     @Composable get() = endDate != LocalDate.now()
 
   fun reset() {
@@ -91,8 +91,8 @@ class CountdownDaysSelection(
     }
   }
 
-  companion object {
-    val Saver: Saver<CountdownDaysSelection, *> =
+  companion object  {
+    val Saver: Saver<WidgetScreenState, *> =
       listSaver(
         save = {
           buildList {
@@ -100,7 +100,7 @@ class CountdownDaysSelection(
             addAll(it.excludedDates)
           }
         },
-        restore = { CountdownDaysSelection(endDate = it.first(), excludedDays = it.drop(1)) },
+        restore = { WidgetScreenState(endDate = it.first(), excludedDays = it.drop(1)) },
       )
   }
 }
