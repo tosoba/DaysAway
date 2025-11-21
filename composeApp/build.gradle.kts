@@ -29,6 +29,7 @@ kotlin {
       implementation(libs.common.compose.components.resources)
       implementation(libs.common.compose.ui.toolingPreview)
       implementation(libs.common.compose.foundation)
+      implementation(libs.common.compose.material.icons)
       implementation(libs.common.compose.material3)
       implementation(libs.common.compose.runtime)
       implementation(libs.common.compose.ui)
@@ -41,7 +42,6 @@ kotlin {
       implementation(libs.common.calendar)
       implementation(libs.common.kotlinx.datetime)
       implementation(libs.common.kotlinx.serializationJson)
-      implementation(libs.common.material.icons)
     }
 
     commonTest.dependencies { implementation(libs.common.kotlin.test) }

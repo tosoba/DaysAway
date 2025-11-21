@@ -23,6 +23,7 @@ androidx-glance-material3 = { group = "androidx.glance", name = "glance-material
 common-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version.ref = "calendar" }
 common-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 common-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+common-compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
 common-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 common-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 common-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
@@ -32,7 +33,6 @@ common-lifecycle-viewModelNavigation3 = { module = "org.jetbrains.androidx.lifec
 common-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 common-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 common-kotlinx-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-common-material-icons = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
 common-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 
 [plugins]
