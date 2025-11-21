@@ -17,7 +17,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -61,7 +62,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
+fun CountdownDaysEditor(onBackClick: () -> Unit = {}) {
   val currentMonth = remember { YearMonth.now() }
   val today = remember { LocalDate.now() }
   val selection =
@@ -86,11 +87,16 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
               }
           )
         },
+        actions = {
+          IconButton(onClick = {}) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit name")
+          }
+        },
         collapsedHeight = 56.dp,
         expandedHeight = 108.dp,
         navigationIcon = {
-          IconButton(onClick = onCloseClick) {
-            Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+          IconButton(onClick = onBackClick) {
+            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back")
           }
         },
         scrollBehavior = topAppBarScrollBehavior,
@@ -115,11 +121,11 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
 
         Button(
           enabled = selection.isValid,
-          onClick = onCloseClick,
+          onClick = {},
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
-          Text("Confirm", style = ButtonDefaults.textStyleFor(buttonHeight))
+          Text("Next", style = ButtonDefaults.textStyleFor(buttonHeight))
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -146,6 +152,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
           ),
         contentPadding = PaddingValues(horizontal = 8.dp),
         dayContent = { day ->
+          val dayOfWeek = day.date.dayOfWeek
           DayToggleButton(
             day = day,
             today = today,
@@ -155,10 +162,7 @@ fun CountdownDaysEditor(onCloseClick: () -> Unit = {}) {
                 .padding(
                   vertical = 2.dp,
                   horizontal =
-                    if (
-                      day.date.dayOfWeek != daysOfWeek.first() &&
-                        day.date.dayOfWeek != daysOfWeek.last()
-                    ) {
+                    if (dayOfWeek != daysOfWeek.first() && dayOfWeek != daysOfWeek.last()) {
                       2.dp
                     } else {
                       0.dp
