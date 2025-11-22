@@ -34,6 +34,8 @@ kotlin {
       implementation(libs.common.compose.runtime)
       implementation(libs.common.compose.ui)
 
+      implementation(libs.common.kermit)
+
       implementation(libs.common.lifecycle.runtimeCompose)
       implementation(libs.common.lifecycle.viewModelNavigation3)
 

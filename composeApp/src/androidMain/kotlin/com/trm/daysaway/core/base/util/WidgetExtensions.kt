@@ -1,0 +1,42 @@
+package com.trm.daysaway.core.base.util
+
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.state.GlanceStateDefinition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
+internal fun <T> GlanceAppWidget.updateWidget(
+  widgetId: Int,
+  definition: GlanceStateDefinition<T>,
+  context: Context,
+  updateState: suspend (T) -> T,
+) {
+  CoroutineScope(context = SupervisorJob() + Dispatchers.Default).launch {
+    val glanceId = context.getGlanceIdByWidgetId(widgetId)
+    updateAppWidgetState(
+      context = context,
+      definition = definition,
+      glanceId = glanceId,
+      updateState = updateState,
+    )
+    update(context, glanceId)
+  }
+}
+
+internal fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
+  GlanceAppWidgetManager(this).getGlanceIdBy(widgetId)
+
+internal inline fun <reified T : GlanceAppWidgetReceiver> Context.getLastWidgetId(): Int? =
+  AppWidgetManager.getInstance(this).getAppWidgetIds(widgetReceiverComponentName<T>()).lastOrNull()
+
+internal inline fun <reified T : GlanceAppWidgetReceiver> Context.widgetReceiverComponentName():
+  ComponentName = ComponentName(applicationContext.packageName, T::class.java.name)
