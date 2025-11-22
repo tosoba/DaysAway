@@ -85,7 +85,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
     topBar = {
       TwoRowsTopAppBar(
         title = {
-          Text(if (state.selectionValid) "Confirm target date" else "Choose a target date")
+          Text(if (state.targetDateValid) "Confirm target date" else "Choose a target date")
         },
         subtitle = { Text(text = state.targetDescription) },
         actions = {
@@ -108,7 +108,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
         Spacer(modifier = Modifier.width(16.dp))
 
         TextButton(
-          enabled = state.selectionValid,
+          enabled = state.targetDateValid,
           onClick = state::reset,
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
@@ -119,7 +119,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-          enabled = state.selectionValid,
+          enabled = state.targetDateValid,
           onClick = {},
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
@@ -138,7 +138,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
     Column(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
       DayOfWeekToggleButtons(
         daysOfWeek = daysOfWeek,
-        selection = state,
+        state = state,
         modifier = Modifier.fillMaxWidth().padding(8.dp),
       )
 
@@ -159,7 +159,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
           DayToggleButton(
             day = day,
             today = today,
-            selection = state,
+            state = state,
             modifier =
               Modifier.fillMaxSize()
                 .padding(
@@ -171,7 +171,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
                       0.dp
                     },
                 ),
-            onClick = { state.onDateSelectionChange(it.date) },
+            onClick = { state.onDateIncludedChange(it.date) },
           )
         },
         monthHeader = { month -> MonthHeader(month) },
@@ -252,25 +252,25 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
 private fun DayToggleButton(
   day: CalendarDay,
   today: LocalDate,
-  selection: WidgetScreenState,
+  state: WidgetScreenState,
   modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit,
 ) {
   if (day.position != DayPosition.MonthDate) return
 
   val enabled = day.position == DayPosition.MonthDate && day.date >= today
-  val selected = selection.isDateSelected(day.date)
+  val included = state.isDateIncluded(day.date)
 
   ToggleButton(
     enabled = enabled,
-    checked = enabled && selected,
+    checked = enabled && included,
     modifier = modifier,
     onCheckedChange = { onClick(day) },
   ) {
     Box(modifier = Modifier.heightIn(max = 64.dp), contentAlignment = Alignment.Center) {
       ToggleButtonText(
         text = day.date.day.toString(),
-        color = if (enabled && selected) Color.White else Color.DarkGray,
+        color = if (enabled && included) Color.White else Color.DarkGray,
       )
     }
   }
@@ -294,18 +294,16 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
 @Composable
 private fun DayOfWeekToggleButtons(
   daysOfWeek: List<DayOfWeek>,
-  selection: WidgetScreenState,
+  state: WidgetScreenState,
   modifier: Modifier = Modifier,
 ) {
   Row(modifier = modifier) {
     daysOfWeek.forEachIndexed { index, dayOfWeek ->
-      val checked = selection.containsDayOfWeek(dayOfWeek)
+      val checked = state.includes(dayOfWeek)
 
       ToggleButton(
         checked = checked,
-        onCheckedChange = {
-          selection.onDayOfWeekSelectionChange(dayOfWeek = dayOfWeek, selected = it)
-        },
+        onCheckedChange = { state.onDayOfWeekIncludedChange(dayOfWeek = dayOfWeek, included = it) },
         modifier = Modifier.weight(1f),
       ) {
         ToggleButtonText(

@@ -21,27 +21,28 @@ import kotlin.time.ExperimentalTime
 @Stable
 class WidgetScreenState(
   targetName: String? = null,
-  endDate: LocalDate = LocalDate.now(),
+  targetDate: LocalDate = LocalDate.now(),
   excludedDays: List<LocalDate> = emptyList(),
 ) {
   var targetName by mutableStateOf(targetName)
-  var endDate by mutableStateOf(endDate)
+  var targetDate by mutableStateOf(targetDate)
   private val excludedDates = mutableStateSetOf<LocalDate>().apply { addAll(excludedDays) }
 
   @Composable
-  fun isDateSelected(date: LocalDate): Boolean = date <= endDate && date !in excludedDates
+  fun isDateIncluded(date: LocalDate): Boolean = date <= targetDate && date !in excludedDates
 
   private val daysRemaining: Long
-    @Composable get() = endDate.toEpochDays() - LocalDate.now().toEpochDays() - excludedDates.size
+    @Composable
+    get() = targetDate.toEpochDays() - LocalDate.now().toEpochDays() - excludedDates.size
 
-  val selectionValid: Boolean
-    @Composable get() = endDate != LocalDate.now()
+  val targetDateValid: Boolean
+    @Composable get() = targetDate != LocalDate.now()
 
   val targetDescription: String
     @Composable
     get() =
       if (daysRemaining > 0) {
-        "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${targetName ?: endDate.format(LocalDate.Formats.ISO)}"
+        "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${targetName ?: targetDate.format(LocalDate.Formats.ISO)}"
       } else {
         buildString {
           append("No target date chosen")
@@ -53,33 +54,33 @@ class WidgetScreenState(
 
   fun reset() {
     targetName = null
-    endDate = LocalDate.now()
+    targetDate = LocalDate.now()
     excludedDates.clear()
   }
 
   @Composable
-  fun containsDayOfWeek(dayOfWeek: DayOfWeek): Boolean {
+  fun includes(dayOfWeek: DayOfWeek): Boolean {
     var date = LocalDate.now()
-    while (date <= endDate) {
+    while (date <= targetDate) {
       if (date.dayOfWeek == dayOfWeek && date !in excludedDates) return true
       date = date.plusDays(1)
     }
     return false
   }
 
-  fun onDateSelectionChange(date: LocalDate) {
+  fun onDateIncludedChange(date: LocalDate) {
     val today = LocalDate.now()
     when {
-      date > endDate -> {
-        endDate = date
+      date > targetDate -> {
+        targetDate = date
       }
-      date == endDate -> {
-        var newEndDate = endDate
+      date == targetDate -> {
+        var newTargetDate = targetDate
         do {
-          newEndDate = newEndDate.minusDays(1).coerceAtLeast(today)
-        } while (newEndDate > today && newEndDate in excludedDates)
-        endDate = newEndDate
-        excludedDates.removeAll { it > endDate }
+          newTargetDate = newTargetDate.minusDays(1).coerceAtLeast(today)
+        } while (newTargetDate > today && newTargetDate in excludedDates)
+        targetDate = newTargetDate
+        excludedDates.removeAll { it > targetDate }
       }
       else -> {
         if (!excludedDates.remove(date)) {
@@ -87,24 +88,24 @@ class WidgetScreenState(
         }
       }
     }
-    resetSelectionIfInvalid(today)
+    resetIfInvalid(today)
   }
 
-  fun onDayOfWeekSelectionChange(dayOfWeek: DayOfWeek, selected: Boolean) {
+  fun onDayOfWeekIncludedChange(dayOfWeek: DayOfWeek, included: Boolean) {
     val today = LocalDate.now()
     var date = today
     while (date.dayOfWeek != dayOfWeek) {
       date = date.plusDays(1)
     }
-    while (date < endDate) {
-      if (selected) excludedDates.remove(date) else excludedDates.add(date)
+    while (date < targetDate) {
+      if (included) excludedDates.remove(date) else excludedDates.add(date)
       date = date.plusDays(7)
     }
-    resetSelectionIfInvalid(today)
+    resetIfInvalid(today)
   }
 
-  private fun resetSelectionIfInvalid(today: LocalDate) {
-    if (endDate.toEpochDays() - today.toEpochDays() - excludedDates.size == 0L) {
+  private fun resetIfInvalid(today: LocalDate) {
+    if (targetDate.toEpochDays() - today.toEpochDays() - excludedDates.size == 0L) {
       reset()
     }
   }
@@ -121,7 +122,7 @@ class WidgetScreenState(
             put(
               DATES,
               buildList {
-                add(it.endDate)
+                add(it.targetDate)
                 addAll(it.excludedDates)
               },
             )
@@ -131,7 +132,7 @@ class WidgetScreenState(
           val dates = it[DATES] as List<*>
           WidgetScreenState(
             targetName = it[TARGET_NAME] as? String,
-            endDate = dates.first() as LocalDate,
+            targetDate = dates.first() as LocalDate,
             excludedDays = dates.drop(1).filterIsInstance<LocalDate>(),
           )
         },
