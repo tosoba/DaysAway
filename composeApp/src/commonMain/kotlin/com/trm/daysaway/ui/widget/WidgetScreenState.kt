@@ -8,33 +8,51 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.setValue
 import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
 import kotlin.time.ExperimentalTime
 
 @Stable
 class WidgetScreenState(
+  targetName: String? = null,
   endDate: LocalDate = LocalDate.now(),
   excludedDays: List<LocalDate> = emptyList(),
 ) {
+  var targetName by mutableStateOf(targetName)
   var endDate by mutableStateOf(endDate)
   private val excludedDates = mutableStateSetOf<LocalDate>().apply { addAll(excludedDays) }
 
   @Composable
   fun isDateSelected(date: LocalDate): Boolean = date <= endDate && date !in excludedDates
 
-  val daysBetween: Long
+  private val daysRemaining: Long
     @Composable get() = endDate.toEpochDays() - LocalDate.now().toEpochDays() - excludedDates.size
 
   val selectionValid: Boolean
     @Composable get() = endDate != LocalDate.now()
 
+  val targetDescription: String
+    @Composable
+    get() =
+      if (daysRemaining > 0) {
+        "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${targetName ?: endDate.format(LocalDate.Formats.ISO)}"
+      } else {
+        buildString {
+          append("No target date chosen")
+          if (!targetName.isNullOrBlank()) {
+            append(" for $targetName")
+          }
+        }
+      }
+
   fun reset() {
+    targetName = null
     endDate = LocalDate.now()
     excludedDates.clear()
   }
@@ -91,16 +109,32 @@ class WidgetScreenState(
     }
   }
 
-  companion object  {
+  companion object {
+    private const val DATES = "DATES"
+    private const val TARGET_NAME = "TARGET_NAME"
+
     val Saver: Saver<WidgetScreenState, *> =
-      listSaver(
+      mapSaver(
         save = {
-          buildList {
-            add(it.endDate)
-            addAll(it.excludedDates)
+          buildMap {
+            put(TARGET_NAME, it.targetName)
+            put(
+              DATES,
+              buildList {
+                add(it.endDate)
+                addAll(it.excludedDates)
+              },
+            )
           }
         },
-        restore = { WidgetScreenState(endDate = it.first(), excludedDays = it.drop(1)) },
+        restore = {
+          val dates = it[DATES] as List<*>
+          WidgetScreenState(
+            targetName = it[TARGET_NAME] as? String,
+            endDate = dates.first() as LocalDate,
+            excludedDays = dates.drop(1).filterIsInstance<LocalDate>(),
+          )
+        },
       )
   }
 }

@@ -6,6 +6,7 @@
 
 package com.trm.daysaway.ui.widget
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -28,15 +30,22 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TwoRowsTopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,39 +64,32 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
-import kotlinx.datetime.format
 import kotlin.time.ExperimentalTime
 
 @Composable
 fun WidgetScreen(onBackClick: () -> Unit = {}) {
-  val currentMonth = remember { YearMonth.now() }
-  val today = remember { LocalDate.now() }
   val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
-  val daysOfWeek = remember(::daysOfWeek)
 
+  val scope = rememberCoroutineScope()
+  var targetNameSheetVisible by rememberSaveable { mutableStateOf(false) }
+  val targetNameSheetState = rememberModalBottomSheetState()
   val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+  val buttonHeight = ButtonDefaults.MediumContainerHeight
 
   Scaffold(
     modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     topBar = {
       TwoRowsTopAppBar(
-        title = { Text(if (state.selectionValid) "Confirm selection" else "Choose a target date") },
-        subtitle = {
-          val daysRemaining = state.daysBetween.takeIf { it > 0 }
-          Text(
-            text =
-              if (daysRemaining == null) {
-                "No target date chosen"
-              } else {
-                "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${state.endDate.format(LocalDate.Formats.ISO)}"
-              }
-          )
+        title = {
+          Text(if (state.selectionValid) "Confirm target date" else "Choose a target date")
         },
+        subtitle = { Text(text = state.targetDescription) },
         actions = {
-          IconButton(onClick = {}) {
+          IconButton(onClick = { targetNameSheetVisible = true }) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit name")
           }
         },
@@ -104,8 +106,6 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
     bottomBar = {
       BottomAppBar {
         Spacer(modifier = Modifier.width(16.dp))
-
-        val buttonHeight = ButtonDefaults.MediumContainerHeight
 
         TextButton(
           enabled = state.selectionValid,
@@ -131,6 +131,10 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
       }
     },
   ) { contentPadding ->
+    val currentMonth = remember { YearMonth.now() }
+    val today = remember { LocalDate.now() }
+    val daysOfWeek = remember(::daysOfWeek)
+
     Column(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
       DayOfWeekToggleButtons(
         daysOfWeek = daysOfWeek,
@@ -172,6 +176,74 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
         },
         monthHeader = { month -> MonthHeader(month) },
       )
+    }
+
+    if (targetNameSheetVisible) {
+      ModalBottomSheet(
+        onDismissRequest = { targetNameSheetVisible = false },
+        sheetState = targetNameSheetState,
+      ) {
+        fun hideSheet() {
+          scope
+            .launch { targetNameSheetState.hide() }
+            .invokeOnCompletion {
+              if (!targetNameSheetState.isVisible) {
+                targetNameSheetVisible = false
+              }
+            }
+        }
+
+        @Composable
+        fun SheetVerticalSpacer() {
+          Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        var initialTargetName by rememberSaveable { mutableStateOf(state.targetName) }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+          val sheetChildModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+
+          Text(
+            "Enter a custom countdown target name",
+            style = MaterialTheme.typography.titleLargeEmphasized,
+            modifier = sheetChildModifier,
+          )
+
+          SheetVerticalSpacer()
+
+          OutlinedTextField(
+            modifier = sheetChildModifier,
+            value = state.targetName.orEmpty(),
+            onValueChange = { state.targetName = it },
+            label = { Text("Target name") },
+          )
+
+          SheetVerticalSpacer()
+
+          Row(modifier = sheetChildModifier, horizontalArrangement = Arrangement.SpaceBetween) {
+            TextButton(
+              modifier = Modifier.heightIn(buttonHeight),
+              contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
+              onClick = {
+                state.targetName = initialTargetName
+                hideSheet()
+              },
+            ) {
+              Text("Cancel")
+            }
+
+            Button(
+              modifier = Modifier.heightIn(buttonHeight),
+              contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
+              onClick = ::hideSheet,
+            ) {
+              Text("Confirm")
+            }
+          }
+
+          SheetVerticalSpacer()
+        }
+      }
     }
   }
 }
