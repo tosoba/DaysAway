@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.trm.daysaway.widget
+package com.trm.daysaway.widget.countdown
 
 import com.kizitonwose.calendar.core.now
 import com.trm.daysaway.core.base.util.LocalDateListSerializer

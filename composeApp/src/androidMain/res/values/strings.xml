@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DaysAway</string>
+    <string name="countdown_widget_label">Countdown</string>
+    <string name="countdown_widget_description">Day countdown to a target date</string>
 </resources>

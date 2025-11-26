@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.trm.daysaway.core.domain.WidgetManager
 import com.trm.daysaway.core.ui.util.popLast
 import com.trm.daysaway.core.ui.util.pushIfLastNotEqualTo
 import com.trm.daysaway.ui.home.HomeScreen
@@ -18,7 +19,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun App() {
+fun App(widgetManager: WidgetManager) {
   MaterialExpressiveTheme {
     val backStack =
       rememberNavBackStack(
@@ -38,11 +39,11 @@ fun App() {
       onBack = backStack::popLast,
       entryProvider =
         entryProvider {
-          entry<Home> {
-            HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(Widget) })
-          }
+          entry<Home> { HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(Widget) }) }
 
-          entry<Widget> { WidgetScreen(onBackClick = backStack::popLast) }
+          entry<Widget> {
+            WidgetScreen(widgetManager = widgetManager, onBackClick = backStack::popLast)
+          }
         },
     )
   }

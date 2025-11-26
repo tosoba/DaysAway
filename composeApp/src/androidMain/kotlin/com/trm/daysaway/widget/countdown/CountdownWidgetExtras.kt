@@ -1,4 +1,4 @@
-package com.trm.daysaway.widget
+package com.trm.daysaway.widget.countdown
 
 object CountdownWidgetExtras {
   const val WIDGET_ID = "EXTRA_WIDGET_ID"

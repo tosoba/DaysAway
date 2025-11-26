@@ -13,10 +13,11 @@ import androidx.compose.runtime.setValue
 import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
+import com.trm.daysaway.core.domain.Countdown
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
-import kotlin.time.ExperimentalTime
 
 @Stable
 class WidgetScreenState(
@@ -27,9 +28,6 @@ class WidgetScreenState(
   var targetName by mutableStateOf(targetName)
   var targetDate by mutableStateOf(targetDate)
   private val excludedDates = mutableStateSetOf<LocalDate>().apply { addAll(excludedDays) }
-
-  @Composable
-  fun isDateIncluded(date: LocalDate): Boolean = date <= targetDate && date !in excludedDates
 
   private val daysRemaining: Long
     @Composable
@@ -52,11 +50,14 @@ class WidgetScreenState(
         }
       }
 
-  fun reset() {
-    targetName = null
-    targetDate = LocalDate.now()
-    excludedDates.clear()
-  }
+  fun toCountdown(): Countdown =
+    Countdown(
+      targetName = targetName,
+      targetDate = targetDate,
+      excludedDates = excludedDates.toList(),
+    )
+
+  @Composable fun includes(date: LocalDate): Boolean = date <= targetDate && date !in excludedDates
 
   @Composable
   fun includes(dayOfWeek: DayOfWeek): Boolean {
@@ -102,6 +103,12 @@ class WidgetScreenState(
       date = date.plusDays(7)
     }
     resetIfInvalid(today)
+  }
+
+  fun reset() {
+    targetName = null
+    targetDate = LocalDate.now()
+    excludedDates.clear()
   }
 
   private fun resetIfInvalid(today: LocalDate) {

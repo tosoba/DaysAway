@@ -64,14 +64,16 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
+import com.trm.daysaway.core.domain.WidgetManager
+import com.trm.daysaway.widget.FakeWidgetManager
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
-import kotlin.time.ExperimentalTime
 
 @Composable
-fun WidgetScreen(onBackClick: () -> Unit = {}) {
+fun WidgetScreen(widgetManager: WidgetManager, onBackClick: () -> Unit) {
   val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
 
   val scope = rememberCoroutineScope()
@@ -120,7 +122,7 @@ fun WidgetScreen(onBackClick: () -> Unit = {}) {
 
         Button(
           enabled = state.targetDateValid,
-          onClick = {},
+          onClick = { scope.launch { widgetManager.addCountdownWidget(state.toCountdown()) } },
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
@@ -259,7 +261,7 @@ private fun DayToggleButton(
   if (day.position != DayPosition.MonthDate) return
 
   val enabled = day.position == DayPosition.MonthDate && day.date >= today
-  val included = state.isDateIncluded(day.date)
+  val included = state.includes(day.date)
 
   ToggleButton(
     enabled = enabled,
@@ -333,5 +335,5 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 @Preview(showBackground = true)
 @Composable
 private fun WidgetScreenPreview() {
-  WidgetScreen()
+  WidgetScreen(widgetManager = FakeWidgetManager(), onBackClick = {})
 }

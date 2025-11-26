@@ -1,4 +1,4 @@
-package com.trm.daysaway.widget
+package com.trm.daysaway.widget.countdown
 
 import android.app.PendingIntent
 import android.content.Context
@@ -12,7 +12,7 @@ internal fun Context.countdownWidgetPinnedCallback(countdown: Countdown): Pendin
   PendingIntent.getBroadcast(
     this,
     0,
-    Intent(this, CountdownWidgetReceiver::class.java).putCountdownExtras(countdown),
+    Intent(this, CountdownWidgetPinnedReceiver::class.java).putCountdownExtras(countdown),
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
   )
 

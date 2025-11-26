@@ -1,4 +1,4 @@
-package com.trm.daysaway.widget
+package com.trm.daysaway.widget.countdown
 
 import android.content.Context
 import android.content.Intent
