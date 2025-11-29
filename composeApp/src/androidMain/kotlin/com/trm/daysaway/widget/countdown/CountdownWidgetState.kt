@@ -15,6 +15,8 @@ import kotlinx.serialization.Serializable
 sealed interface CountdownWidgetState {
   @Serializable data object Empty : CountdownWidgetState
 
+  @Serializable data object Loading : CountdownWidgetState
+
   @Serializable
   data class Ready(
     @Serializable(with = LocalDateIso8601Serializer::class) val targetDate: LocalDate,

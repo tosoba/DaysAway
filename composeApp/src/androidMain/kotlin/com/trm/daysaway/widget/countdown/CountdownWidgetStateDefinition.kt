@@ -27,7 +27,7 @@ object CountdownWidgetStateDefinition : GlanceStateDefinition<CountdownWidgetSta
     context.dataStoreFile(DATA_STORE_FILENAME)
 
   private object StateSerializer : Serializer<CountdownWidgetState> {
-    override val defaultValue = CountdownWidgetState.Empty
+    override val defaultValue = CountdownWidgetState.Loading
 
     override suspend fun readFrom(input: InputStream): CountdownWidgetState =
       try {

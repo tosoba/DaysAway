@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -41,6 +42,9 @@ fun CountdownWidgetContent() {
       when (val state = currentState<CountdownWidgetState>()) {
         CountdownWidgetState.Empty -> {
           Text(text = "No target chosen", style = mediumTextStyle())
+        }
+        CountdownWidgetState.Loading -> {
+          CircularProgressIndicator()
         }
         is CountdownWidgetState.Ready -> {
           val daysRemaining = state.getDaysRemaining(LocalDate.now())
