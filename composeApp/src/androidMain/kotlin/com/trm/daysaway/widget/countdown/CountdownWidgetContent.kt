@@ -2,7 +2,6 @@
 
 package com.trm.daysaway.widget.countdown
 
-import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +35,8 @@ fun CountdownWidgetContent() {
           .padding(16.dp)
           .appWidgetBackground()
           .background(GlanceTheme.colors.primaryContainer)
-          .appWidgetBackgroundCornerRadius(),
+          .cornerRadius(16.dp),
+      verticalAlignment = Alignment.CenterVertically,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       when (val state = currentState<CountdownWidgetState>()) {
@@ -95,12 +95,3 @@ private fun boldTextStyle(): TextStyle =
     fontSize = 20.sp,
     fontWeight = FontWeight.Bold,
   )
-
-private fun GlanceModifier.appWidgetBackgroundCornerRadius(): GlanceModifier {
-  if (Build.VERSION.SDK_INT >= 31) {
-    cornerRadius(android.R.dimen.system_app_widget_background_radius)
-  } else {
-    cornerRadius(16.dp)
-  }
-  return this
-}
