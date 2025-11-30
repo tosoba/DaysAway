@@ -3,6 +3,7 @@ package com.trm.daysaway.ui.home
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.os.Build
 import android.os.FileObserver
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
@@ -38,21 +39,38 @@ actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifi
   val widgetIds = rememberSaveable { mutableStateListOf<Int>() }
 
   DisposableEffect(Unit) {
+    fun onFileEvent(event: Int, path: String?) {
+      when (event) {
+        FileObserver.DELETE_SELF -> {
+          widgetIds.clear()
+        }
+        FileObserver.DELETE -> {
+          path
+            ?.lastIndexOf('-')
+            ?.takeUnless { it == -1 }
+            ?.let { path.substring(it + 1) }
+            ?.toIntOrNull()
+            ?.let(widgetIds::remove)
+        }
+      }
+    }
+
+    val eventsMask = FileObserver.DELETE or FileObserver.DELETE_SELF
+    val dataStoreDir = context.dataStoreFile("")
     val observer =
-      object : FileObserver(context.dataStoreFile(""), DELETE or DELETE_SELF) {
-          override fun onEvent(event: Int, path: String?) {
-            when (event) {
-              DELETE_SELF -> widgetIds.clear()
-              DELETE -> widgetIdFrom(path)?.let(widgetIds::remove)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          object : FileObserver(dataStoreDir, eventsMask) {
+            override fun onEvent(event: Int, path: String?) {
+              onFileEvent(event, path)
             }
           }
-
-          private fun widgetIdFrom(path: String?): Int? =
-            path
-              ?.lastIndexOf('-')
-              ?.takeUnless { it == -1 }
-              ?.let { path.substring(it + 1) }
-              ?.toIntOrNull()
+        } else {
+          @Suppress("DEPRECATION")
+          object : FileObserver(dataStoreDir.path, eventsMask) {
+            override fun onEvent(event: Int, path: String?) {
+              onFileEvent(event, path)
+            }
+          }
         }
         .apply(FileObserver::startWatching)
 
