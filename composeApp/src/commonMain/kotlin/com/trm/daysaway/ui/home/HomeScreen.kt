@@ -21,6 +21,6 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
       LargeExtendedFloatingActionButton(onClick = onAddWidgetClick) { Text("Add widget") }
     },
   ) { contentPadding ->
-    ExistingWidgetsGrid(modifier = Modifier.fillMaxSize().padding(contentPadding))
+    HomeScreenWidgetsGrid(modifier = Modifier.fillMaxSize().padding(contentPadding))
   }
 }

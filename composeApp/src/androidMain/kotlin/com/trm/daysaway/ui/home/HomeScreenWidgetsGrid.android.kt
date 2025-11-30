@@ -1,4 +1,4 @@
-package com.trm.daysaway.widget.countdown
+package com.trm.daysaway.ui.home
 
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
@@ -23,11 +23,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.datastore.dataStoreFile
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.trm.daysaway.core.base.util.getLastWidgetId
+import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 
 private const val WIDGET_HOST_ID = 1024
 
 @Composable
-fun CountdownWidgetPreviews(modifier: Modifier = Modifier) {
+actual fun HomeScreenWidgetsGrid(modifier: Modifier) {
   val context = LocalContext.current
   val widgetIds = rememberSaveable { mutableStateListOf<Int>() }
 
