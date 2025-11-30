@@ -26,6 +26,7 @@ common-compose-components-resources = { module = "org.jetbrains.compose.componen
 common-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 common-compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
 common-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+common-compose-material3-windowSizeClass = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 common-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 common-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 common-compose-ui-toolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose" }

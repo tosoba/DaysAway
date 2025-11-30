@@ -31,6 +31,7 @@ kotlin {
       implementation(libs.common.compose.foundation)
       implementation(libs.common.compose.material.icons)
       implementation(libs.common.compose.material3)
+      implementation(libs.common.compose.material3.windowSizeClass)
       implementation(libs.common.compose.runtime)
       implementation(libs.common.compose.ui)
 

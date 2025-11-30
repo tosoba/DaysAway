@@ -4,12 +4,17 @@ import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.FileObserver
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -74,22 +79,31 @@ actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifi
       .find { it.provider == componentName }
   }
 
-  LazyVerticalGrid(
-    columns = GridCells.Adaptive(minSize = 150.dp),
-    modifier = modifier,
-    horizontalArrangement = Arrangement.spacedBy(16.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp),
-    contentPadding = contentPadding,
-  ) {
-    items(widgetIds, key = { it }) { widgetId ->
-      AndroidView(
-        factory = { ctx ->
-          appWidgetHost.createView(ctx, widgetId, widgetProvider).apply {
-            setAppWidget(widgetId, widgetProvider)
-          }
-        },
-        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+  Crossfade(widgetIds.isEmpty()) {
+    if (it) {
+      HomeScreenNoWidgetsText(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        bottom = { Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding())) },
       )
+    } else {
+      LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 150.dp),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = contentPadding,
+      ) {
+        items(widgetIds, key = { widgetId -> widgetId }) { widgetId ->
+          AndroidView(
+            factory = { ctx ->
+              appWidgetHost.createView(ctx, widgetId, widgetProvider).apply {
+                setAppWidget(widgetId, widgetProvider)
+              }
+            },
+            modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+          )
+        }
+      }
     }
   }
 }
