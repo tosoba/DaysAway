@@ -2,8 +2,8 @@ package com.trm.daysaway.widget.countdown
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.Serializer
-import androidx.datastore.dataStore
 import androidx.datastore.dataStoreFile
 import androidx.glance.state.GlanceStateDefinition
 import co.touchlab.kermit.Logger
@@ -14,17 +14,19 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 object CountdownWidgetStateDefinition : GlanceStateDefinition<CountdownWidgetState> {
-  private const val DATA_STORE_FILENAME = "CountdownWidgetState"
+  private const val DATA_STORE_FILE_NAME_PREFIX = "CountdownWidget-"
 
-  private val Context.datastore by dataStore(DATA_STORE_FILENAME, StateSerializer)
+  private fun Context.dataStoreFileFor(key: String): File =
+    dataStoreFile("$DATA_STORE_FILE_NAME_PREFIX$key")
 
   override suspend fun getDataStore(
     context: Context,
     fileKey: String,
-  ): DataStore<CountdownWidgetState> = context.datastore
+  ): DataStore<CountdownWidgetState> =
+    DataStoreFactory.create(serializer = StateSerializer) { context.dataStoreFileFor(fileKey) }
 
   override fun getLocation(context: Context, fileKey: String): File =
-    context.dataStoreFile(DATA_STORE_FILENAME)
+    context.dataStoreFileFor(fileKey)
 
   private object StateSerializer : Serializer<CountdownWidgetState> {
     override val defaultValue = CountdownWidgetState.Loading
