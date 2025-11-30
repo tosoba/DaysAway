@@ -28,7 +28,6 @@ import kotlinx.datetime.LocalDate
 @Composable
 fun CountdownWidgetContent() {
   GlanceTheme {
-    // TODO: edit button for both cases
     Column(
       modifier =
         GlanceModifier.fillMaxSize()
