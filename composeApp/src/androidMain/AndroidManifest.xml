@@ -22,10 +22,6 @@
         </activity>
 
         <receiver
-            android:name=".widget.countdown.CountdownWidgetPinnedReceiver"
-            android:exported="false" />
-
-        <receiver
             android:name=".widget.countdown.CountdownWidgetReceiver"
             android:exported="false"
             android:label="@string/countdown_widget_label">

@@ -73,7 +73,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 
 @Composable
-fun WidgetScreen(widgetManager: WidgetManager, onBackClick: () -> Unit) {
+fun WidgetScreen(widgetManager: WidgetManager, navigateBack: () -> Unit) {
   val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
 
   val scope = rememberCoroutineScope()
@@ -81,6 +81,8 @@ fun WidgetScreen(widgetManager: WidgetManager, onBackClick: () -> Unit) {
   val targetNameSheetState = rememberModalBottomSheetState()
   val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val buttonHeight = ButtonDefaults.MediumContainerHeight
+
+  WidgetScreenPinSuccessEffect(navigateBack)
 
   Scaffold(
     modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -98,7 +100,7 @@ fun WidgetScreen(widgetManager: WidgetManager, onBackClick: () -> Unit) {
         collapsedHeight = 56.dp,
         expandedHeight = 108.dp,
         navigationIcon = {
-          IconButton(onClick = onBackClick) {
+          IconButton(onClick = navigateBack) {
             Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back")
           }
         },
@@ -335,5 +337,5 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 @Preview(showBackground = true)
 @Composable
 private fun WidgetScreenPreview() {
-  WidgetScreen(widgetManager = FakeWidgetManager(), onBackClick = {})
+  WidgetScreen(widgetManager = FakeWidgetManager(), navigateBack = {})
 }

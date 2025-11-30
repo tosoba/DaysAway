@@ -42,7 +42,7 @@ fun App(widgetManager: WidgetManager) {
           entry<Home> { HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(Widget) }) }
 
           entry<Widget> {
-            WidgetScreen(widgetManager = widgetManager, onBackClick = backStack::popLast)
+            WidgetScreen(widgetManager = widgetManager, navigateBack = backStack::popLast)
           }
         },
     )

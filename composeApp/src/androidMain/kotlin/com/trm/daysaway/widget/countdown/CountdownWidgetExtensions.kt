@@ -6,13 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import com.trm.daysaway.core.base.util.actionIntent
 import com.trm.daysaway.core.domain.Countdown
+import com.trm.daysaway.ui.widget.WIDGET_PIN_SUCCESS_ACTION
 import kotlinx.datetime.LocalDate
 
 internal fun Context.countdownWidgetPinnedCallback(countdown: Countdown): PendingIntent =
   PendingIntent.getBroadcast(
     this,
     0,
-    Intent(this, CountdownWidgetPinnedReceiver::class.java).putCountdownExtras(countdown),
+    Intent(WIDGET_PIN_SUCCESS_ACTION).putCountdownExtras(countdown),
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
   )
 
@@ -34,6 +35,5 @@ internal fun Bundle.toCountdown(): Countdown =
     targetDate = LocalDate.fromEpochDays(getLong(CountdownWidgetExtras.TARGET_DATE)),
     targetName = getString(CountdownWidgetExtras.TARGET_NAME),
     excludedDates =
-      getLongArray(CountdownWidgetExtras.EXCLUDED_DATES)?.map(LocalDate::fromEpochDays)
-        ?: emptyList(),
+      getLongArray(CountdownWidgetExtras.EXCLUDED_DATES)?.map(LocalDate::fromEpochDays).orEmpty(),
   )
