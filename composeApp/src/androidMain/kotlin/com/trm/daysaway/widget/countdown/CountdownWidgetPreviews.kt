@@ -43,7 +43,7 @@ fun CountdownWidgetPreviews(modifier: Modifier = Modifier) {
     }
 
   LazyVerticalGrid(
-    columns = GridCells.Adaptive(minSize = 128.dp),
+    columns = GridCells.Adaptive(minSize = 150.dp),
     modifier = modifier,
     horizontalArrangement = Arrangement.spacedBy(16.dp),
     verticalArrangement = Arrangement.spacedBy(16.dp),
