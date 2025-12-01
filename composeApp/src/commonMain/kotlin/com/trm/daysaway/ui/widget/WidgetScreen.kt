@@ -65,11 +65,22 @@ import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
 import com.trm.daysaway.core.domain.Countdown
+import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.cancel
+import daysaway.composeapp.generated.resources.confirm
+import daysaway.composeapp.generated.resources.reset
+import daysaway.composeapp.generated.resources.widget_screen_choose_target_date
+import daysaway.composeapp.generated.resources.widget_screen_confirm_target_date
+import daysaway.composeapp.generated.resources.widget_screen_edit_name
+import daysaway.composeapp.generated.resources.widget_screen_enter_custom_name
+import daysaway.composeapp.generated.resources.widget_screen_go_back
+import daysaway.composeapp.generated.resources.widget_screen_target_name
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) {
@@ -88,19 +99,28 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
     topBar = {
       TwoRowsTopAppBar(
         title = {
-          Text(if (state.targetDateValid) "Confirm target date" else "Choose a target date")
+          Text(
+            if (state.targetDateValid) stringResource(Res.string.widget_screen_confirm_target_date)
+            else stringResource(Res.string.widget_screen_choose_target_date)
+          )
         },
         subtitle = { Text(text = state.targetDescription) },
         actions = {
           IconButton(onClick = { targetNameSheetVisible = true }) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit name")
+            Icon(
+              imageVector = Icons.Default.Edit,
+              contentDescription = stringResource(Res.string.widget_screen_edit_name),
+            )
           }
         },
         collapsedHeight = 56.dp,
         expandedHeight = 108.dp,
         navigationIcon = {
           IconButton(onClick = navigateBack) {
-            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back")
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(Res.string.widget_screen_go_back),
+            )
           }
         },
         scrollBehavior = topAppBarScrollBehavior,
@@ -116,7 +136,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
-          Text("Reset", style = ButtonDefaults.textStyleFor(buttonHeight))
+          Text(stringResource(Res.string.reset), style = ButtonDefaults.textStyleFor(buttonHeight))
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -127,7 +147,10 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
-          Text("Confirm", style = ButtonDefaults.textStyleFor(buttonHeight))
+          Text(
+            stringResource(Res.string.confirm),
+            style = ButtonDefaults.textStyleFor(buttonHeight),
+          )
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -207,7 +230,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           val sheetChildModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
 
           Text(
-            "Enter a custom countdown target name",
+            stringResource(Res.string.widget_screen_enter_custom_name),
             style = MaterialTheme.typography.titleLargeEmphasized,
             modifier = sheetChildModifier,
           )
@@ -218,7 +241,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
             modifier = sheetChildModifier,
             value = state.targetName.orEmpty(),
             onValueChange = { state.targetName = it },
-            label = { Text("Target name") },
+            label = { Text(stringResource(Res.string.widget_screen_target_name)) },
           )
 
           SheetVerticalSpacer()
@@ -232,7 +255,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
                 hideSheet()
               },
             ) {
-              Text("Cancel")
+              Text(stringResource(Res.string.cancel))
             }
 
             Button(
@@ -240,7 +263,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
               contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
               onClick = ::hideSheet,
             ) {
-              Text("Confirm")
+              Text(stringResource(Res.string.confirm))
             }
           }
 

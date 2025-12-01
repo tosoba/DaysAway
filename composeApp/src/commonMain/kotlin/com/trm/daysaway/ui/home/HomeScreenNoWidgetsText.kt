@@ -24,8 +24,11 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.home_screen_no_widgets_added
+import daysaway.composeapp.generated.resources.home_screen_no_widgets_create_one
 import daysaway.composeapp.generated.resources.widgets
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -71,12 +74,12 @@ fun HomeScreenNoWidgetsText(modifier: Modifier = Modifier, bottom: @Composable (
 @Composable
 private fun ColumnScope.WidgetsText() {
   Text(
-    "No widgets added yet.",
+    stringResource(Res.string.home_screen_no_widgets_added),
     style = MaterialTheme.typography.titleLargeEmphasized,
     textAlign = TextAlign.Start,
   )
   Text(
-    "Create one using the button below.",
+    stringResource(Res.string.home_screen_no_widgets_create_one),
     style = MaterialTheme.typography.bodyMedium,
     textAlign = TextAlign.Start,
   )

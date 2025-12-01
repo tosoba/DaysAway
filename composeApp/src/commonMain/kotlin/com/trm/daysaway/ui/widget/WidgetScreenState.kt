@@ -14,10 +14,16 @@ import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
 import com.trm.daysaway.core.domain.Countdown
+import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.widget_screen_days_remaining_description
+import daysaway.composeapp.generated.resources.widget_screen_description_for
+import daysaway.composeapp.generated.resources.widget_screen_no_target_date_chosen
 import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Stable
 class WidgetScreenState(
@@ -40,12 +46,17 @@ class WidgetScreenState(
     @Composable
     get() =
       if (daysRemaining > 0) {
-        "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"} remaining until ${targetName ?: targetDate.format(LocalDate.Formats.ISO)}"
+        pluralStringResource(
+          Res.plurals.widget_screen_days_remaining_description,
+          daysRemaining.toInt(),
+          daysRemaining,
+          targetName ?: targetDate.format(LocalDate.Formats.ISO),
+        )
       } else {
         buildString {
-          append("No target date chosen")
-          if (!targetName.isNullOrBlank()) {
-            append(" for $targetName")
+          append(stringResource(Res.string.widget_screen_no_target_date_chosen))
+          targetName?.takeIf(String::isNotBlank)?.let {
+            append(stringResource(Res.string.widget_screen_description_for, it))
           }
         }
       }

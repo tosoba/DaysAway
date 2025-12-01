@@ -3,7 +3,10 @@ package com.trm.daysaway.core.base.util
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
+import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -40,3 +43,14 @@ internal inline fun <reified T : GlanceAppWidgetReceiver> Context.getLastWidgetI
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.widgetReceiverComponentName():
   ComponentName = ComponentName(applicationContext.packageName, T::class.java.name)
+
+@Composable
+internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): String =
+  LocalContext.current.getString(id, *args.toTypedArray())
+
+@Composable
+internal fun pluralStringResource(
+  @StringRes id: Int,
+  quantity: Int,
+  args: List<Any> = emptyList(),
+): String = LocalContext.current.resources.getQuantityString(id, quantity, *args.toTypedArray())

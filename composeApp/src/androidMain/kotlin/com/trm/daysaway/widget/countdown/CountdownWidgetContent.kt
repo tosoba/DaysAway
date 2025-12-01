@@ -22,6 +22,9 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import com.kizitonwose.calendar.core.now
+import com.trm.daysaway.R
+import com.trm.daysaway.core.base.util.pluralStringResource
+import com.trm.daysaway.core.base.util.stringResource
 import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDate
 
@@ -40,7 +43,10 @@ fun CountdownWidgetContent() {
     ) {
       when (val state = currentState<CountdownWidgetState>()) {
         CountdownWidgetState.Empty -> {
-          Text(text = "No target chosen", style = mediumTextStyle())
+          Text(
+            text = stringResource(R.string.countdown_widget_no_target_chosen),
+            style = mediumTextStyle(),
+          )
         }
         CountdownWidgetState.Loading -> {
           CircularProgressIndicator()
@@ -50,10 +56,18 @@ fun CountdownWidgetContent() {
           when {
             daysRemaining > 0 -> {
               Text(
-                text = "$daysRemaining ${if (daysRemaining == 1L) "day" else "days"}",
+                text =
+                  pluralStringResource(
+                    R.plurals.countdown_widget_days,
+                    daysRemaining.toInt(),
+                    listOf(daysRemaining),
+                  ),
                 style = boldTextStyle(),
               )
-              Text(text = "remaining until", style = regularTextStyle())
+              Text(
+                text = stringResource(R.string.countdown_widget_remaining_until),
+                style = regularTextStyle(),
+              )
               Text(
                 text = "${state.targetName ?: state.formattedTargetDate}.",
                 style = mediumTextStyle(),
@@ -61,12 +75,18 @@ fun CountdownWidgetContent() {
             }
             !state.targetName.isNullOrBlank() -> {
               Text(text = state.targetName, style = mediumTextStyle())
-              Text(text = "was reached on", style = regularTextStyle())
+              Text(
+                text = stringResource(R.string.countdown_widget_was_reached_on),
+                style = regularTextStyle(),
+              )
               Text(text = "${state.formattedTargetDate}.", style = mediumTextStyle())
             }
             else -> {
               Text(text = state.formattedTargetDate, style = mediumTextStyle())
-              Text(text = "was reached.", style = regularTextStyle())
+              Text(
+                text = stringResource(R.string.countdown_widget_was_reached),
+                style = regularTextStyle(),
+              )
             }
           }
         }

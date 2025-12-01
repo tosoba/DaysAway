@@ -24,11 +24,17 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.add_widget
+import daysaway.composeapp.generated.resources.home_screen_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen(onAddWidgetClick: () -> Unit) {
   Scaffold(
-    topBar = { CenterAlignedTopAppBar(title = { Text("DaysAway") }) },
+    topBar = {
+      CenterAlignedTopAppBar(title = { Text(stringResource(Res.string.home_screen_title)) })
+    },
     floatingActionButtonPosition = FabPosition.Center,
     floatingActionButton = {
       LargeExtendedFloatingActionButton(onClick = onAddWidgetClick) {
@@ -36,7 +42,8 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
           text =
             buildAnnotatedString {
               appendInlineContent(ICON_PLACEHOLDER)
-              append(" Add widget")
+              append(' ')
+              append(stringResource(Res.string.add_widget))
             },
           inlineContent =
             mapOf(

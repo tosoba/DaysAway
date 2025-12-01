@@ -2,4 +2,13 @@
     <string name="app_name">DaysAway</string>
     <string name="countdown_widget_label">Countdown</string>
     <string name="countdown_widget_description">Day countdown to a target date</string>
+
+    <string name="countdown_widget_no_target_chosen">No target chosen</string>
+    <plurals name="countdown_widget_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="countdown_widget_remaining_until">remaining until</string>
+    <string name="countdown_widget_was_reached_on">was reached on</string>
+    <string name="countdown_widget_was_reached">was reached.</string>
 </resources>
