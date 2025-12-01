@@ -9,6 +9,7 @@ import com.trm.daysaway.widget.countdown.CountdownWidget
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 import com.trm.daysaway.widget.countdown.CountdownWidgetState
 import com.trm.daysaway.widget.countdown.countdownWidgetPinnedCallback
+import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent
 
 actual class DeviceWidgetManager(private val context: Context) : WidgetManager {
   override suspend fun addCountdownWidget(countdown: Countdown) {
@@ -19,5 +20,9 @@ actual class DeviceWidgetManager(private val context: Context) : WidgetManager {
         previewState = CountdownWidgetState.Ready(countdown),
         successCallback = context.countdownWidgetPinnedCallback(countdown),
       )
+  }
+
+  override fun updateCountdownWidget(widgetId: Int, countdown: Countdown) {
+    context.sendBroadcast(context.updateCountdownWidgetIntent(widgetId, countdown))
   }
 }

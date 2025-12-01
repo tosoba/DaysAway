@@ -9,6 +9,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.trm.daysaway.core.base.util.getLastWidgetId
+import com.trm.daysaway.core.base.util.showWidgetPinnedToast
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 import com.trm.daysaway.widget.countdown.toCountdown
 import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent
@@ -35,6 +36,7 @@ actual fun WidgetScreenPinSuccessEffect(action: () -> Unit) {
                   .toCountdown(),
             )
           )
+          context.showWidgetPinnedToast()
           action()
         }
       }

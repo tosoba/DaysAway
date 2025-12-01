@@ -5,4 +5,6 @@ import com.trm.daysaway.core.domain.WidgetManager
 
 class FakeWidgetManager : WidgetManager {
   override suspend fun addCountdownWidget(countdown: Countdown) = Unit
+
+  override fun updateCountdownWidget(widgetId: Int, countdown: Countdown) = Unit
 }

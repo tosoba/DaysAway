@@ -64,8 +64,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
-import com.trm.daysaway.core.domain.WidgetManager
-import com.trm.daysaway.widget.FakeWidgetManager
+import com.trm.daysaway.core.domain.Countdown
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
@@ -73,7 +72,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 
 @Composable
-fun WidgetScreen(widgetManager: WidgetManager, navigateBack: () -> Unit) {
+fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) {
   val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
 
   val scope = rememberCoroutineScope()
@@ -124,11 +123,11 @@ fun WidgetScreen(widgetManager: WidgetManager, navigateBack: () -> Unit) {
 
         Button(
           enabled = state.targetDateValid,
-          onClick = { scope.launch { widgetManager.addCountdownWidget(state.toCountdown()) } },
+          onClick = { onConfirmClick(state.toCountdown()) },
           modifier = Modifier.heightIn(buttonHeight),
           contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
         ) {
-          Text("Next", style = ButtonDefaults.textStyleFor(buttonHeight))
+          Text("Confirm", style = ButtonDefaults.textStyleFor(buttonHeight))
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -337,5 +336,5 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 @Preview(showBackground = true)
 @Composable
 private fun WidgetScreenPreview() {
-  WidgetScreen(widgetManager = FakeWidgetManager(), navigateBack = {})
+  WidgetScreen(onConfirmClick = {}, navigateBack = {})
 }
