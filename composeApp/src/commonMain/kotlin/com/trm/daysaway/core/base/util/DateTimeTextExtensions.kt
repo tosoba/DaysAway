@@ -6,7 +6,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.YearMonth
 
-fun YearMonth.displayText(short: Boolean = false): String =
+fun YearMonth.displayText(short: Boolean = true): String =
   "${month.displayText(short = short)} $year"
 
 fun Month.displayText(short: Boolean = true): String = getDisplayName(short, Locale.current)
