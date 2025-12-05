@@ -296,7 +296,9 @@ private fun DayToggleButton(
     Box(modifier = Modifier.heightIn(max = 64.dp), contentAlignment = Alignment.Center) {
       ToggleButtonText(
         text = day.date.day.toString(),
-        color = if (enabled && included) Color.White else Color.DarkGray,
+        color =
+          if (enabled && included) MaterialTheme.colorScheme.surface
+          else MaterialTheme.colorScheme.onSurfaceVariant,
       )
     }
   }
@@ -334,7 +336,9 @@ private fun DayOfWeekToggleButtons(
       ) {
         ToggleButtonText(
           text = dayOfWeek.displayText(uppercase = true, narrow = true),
-          color = if (checked) Color.White else Color.DarkGray,
+          color =
+            if (checked) MaterialTheme.colorScheme.surface
+            else MaterialTheme.colorScheme.onSurfaceVariant,
         )
       }
 
