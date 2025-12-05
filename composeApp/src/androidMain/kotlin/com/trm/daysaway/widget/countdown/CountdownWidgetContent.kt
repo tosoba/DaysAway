@@ -97,11 +97,15 @@ fun CountdownWidgetContent() {
 
 @Composable
 private fun regularTextStyle(): TextStyle =
-  TextDefaults.defaultTextStyle.copy(textAlign = TextAlign.Center)
+  TextDefaults.defaultTextStyle.copy(
+    color = GlanceTheme.colors.onBackground,
+    textAlign = TextAlign.Center,
+  )
 
 @Composable
 private fun mediumTextStyle(): TextStyle =
   TextDefaults.defaultTextStyle.copy(
+    color = GlanceTheme.colors.onBackground,
     textAlign = TextAlign.Center,
     fontSize = 16.sp,
     fontWeight = FontWeight.Medium,
@@ -110,6 +114,7 @@ private fun mediumTextStyle(): TextStyle =
 @Composable
 private fun boldTextStyle(): TextStyle =
   TextDefaults.defaultTextStyle.copy(
+    color = GlanceTheme.colors.onBackground,
     textAlign = TextAlign.Center,
     fontSize = 20.sp,
     fontWeight = FontWeight.Bold,
