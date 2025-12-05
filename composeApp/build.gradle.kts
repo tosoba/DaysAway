@@ -21,6 +21,7 @@ kotlin {
   sourceSets {
     androidMain.dependencies {
       implementation(libs.androidx.activity.compose)
+      implementation(libs.androidx.core.splashscreen)
       implementation(libs.androidx.glance.appwidget)
       implementation(libs.androidx.glance.material3)
     }

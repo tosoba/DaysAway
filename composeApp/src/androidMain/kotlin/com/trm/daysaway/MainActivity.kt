@@ -10,12 +10,14 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.trm.daysaway.ui.App
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
   @OptIn(ExperimentalMaterial3ExpressiveApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     setContent {
