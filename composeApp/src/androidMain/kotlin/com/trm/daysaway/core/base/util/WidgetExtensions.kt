@@ -3,6 +3,7 @@ package com.trm.daysaway.core.base.util
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
@@ -50,7 +51,7 @@ internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): 
 
 @Composable
 internal fun pluralStringResource(
-  @StringRes id: Int,
+  @PluralsRes id: Int,
   quantity: Int,
   args: List<Any> = emptyList(),
 ): String = LocalContext.current.resources.getQuantityString(id, quantity, *args.toTypedArray())
