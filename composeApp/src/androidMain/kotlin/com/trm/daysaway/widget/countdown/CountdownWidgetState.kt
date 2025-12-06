@@ -22,6 +22,7 @@ sealed interface CountdownWidgetState {
     @Serializable(with = LocalDateIso8601Serializer::class) val targetDate: LocalDate,
     val targetName: String?,
     @Serializable(with = LocalDateListSerializer::class) val excludedDates: List<LocalDate>,
+    val version: Int = 1,
   ) : CountdownWidgetState {
     val formattedTargetDate: String
       get() = targetDate.format(LocalDate.Formats.ISO)

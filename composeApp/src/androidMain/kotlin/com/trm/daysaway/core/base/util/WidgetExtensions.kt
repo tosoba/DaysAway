@@ -36,6 +36,27 @@ internal fun <T> GlanceAppWidget.updateWidget(
   }
 }
 
+internal inline fun <reified T : GlanceAppWidget, S> T.updateAllWidgets(
+  definition: GlanceStateDefinition<S>,
+  context: Context,
+  noinline updateState: suspend (S) -> S,
+) {
+  CoroutineScope(context = SupervisorJob() + Dispatchers.Default).launch {
+    for (glanceId in context.getGlanceIds<T>()) {
+      updateAppWidgetState(
+        context = context,
+        definition = definition,
+        glanceId = glanceId,
+        updateState = updateState,
+      )
+      update(context, glanceId)
+    }
+  }
+}
+
+internal suspend inline fun <reified T : GlanceAppWidget> Context.getGlanceIds(): List<GlanceId> =
+  GlanceAppWidgetManager(this).getGlanceIds(T::class.java)
+
 internal fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
   GlanceAppWidgetManager(this).getGlanceIdBy(widgetId)
 

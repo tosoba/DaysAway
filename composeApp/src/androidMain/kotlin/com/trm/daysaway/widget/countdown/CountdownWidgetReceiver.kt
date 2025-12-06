@@ -3,6 +3,7 @@ package com.trm.daysaway.widget.countdown
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import com.trm.daysaway.core.base.util.updateAllWidgets
 import com.trm.daysaway.core.base.util.updateWidget
 
 class CountdownWidgetReceiver : GlanceAppWidgetReceiver() {
@@ -19,6 +20,18 @@ class CountdownWidgetReceiver : GlanceAppWidgetReceiver() {
           context = context,
         ) {
           CountdownWidgetState.Ready(extras.toCountdown())
+        }
+      }
+      CountdownWidgetActions.UPDATE_ALL -> {
+        glanceAppWidget.updateAllWidgets(
+          definition = CountdownWidgetStateDefinition,
+          context = context,
+        ) { state ->
+          when (state) {
+            CountdownWidgetState.Empty,
+            CountdownWidgetState.Loading -> state
+            is CountdownWidgetState.Ready -> state.copy(version = state.version + 1)
+          }
         }
       }
     }
