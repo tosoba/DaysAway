@@ -64,7 +64,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
-import com.trm.daysaway.core.domain.Countdown
+import com.trm.daysaway.domain.Countdown
 import daysaway.composeapp.generated.resources.Res
 import daysaway.composeapp.generated.resources.cancel
 import daysaway.composeapp.generated.resources.confirm

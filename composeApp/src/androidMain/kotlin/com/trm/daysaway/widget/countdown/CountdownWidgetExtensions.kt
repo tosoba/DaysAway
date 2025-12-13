@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.trm.daysaway.core.base.util.actionIntent
-import com.trm.daysaway.core.domain.Countdown
+import com.trm.daysaway.domain.Countdown
 import com.trm.daysaway.ui.widget.WIDGET_PIN_SUCCESS_ACTION
 import kotlinx.datetime.LocalDate
 

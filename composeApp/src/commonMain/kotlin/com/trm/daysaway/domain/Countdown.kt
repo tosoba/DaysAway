@@ -1,4 +1,4 @@
-package com.trm.daysaway.core.domain
+package com.trm.daysaway.domain
 
 import kotlinx.datetime.LocalDate
 

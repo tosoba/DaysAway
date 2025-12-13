@@ -6,7 +6,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.trm.daysaway.core.domain.Countdown
+import com.trm.daysaway.domain.Countdown
 import com.trm.daysaway.core.ui.util.popLast
 import com.trm.daysaway.core.ui.util.pushIfLastNotEqualTo
 import com.trm.daysaway.ui.home.HomeScreen

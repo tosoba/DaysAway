@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import com.kizitonwose.calendar.core.minusDays
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
-import com.trm.daysaway.core.domain.Countdown
+import com.trm.daysaway.domain.Countdown
 import daysaway.composeapp.generated.resources.Res
 import daysaway.composeapp.generated.resources.widget_screen_days_remaining_description
 import daysaway.composeapp.generated.resources.widget_screen_description_for

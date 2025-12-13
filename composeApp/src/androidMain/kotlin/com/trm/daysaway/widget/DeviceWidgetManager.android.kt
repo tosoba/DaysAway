@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Build
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.trm.daysaway.core.base.util.actionIntent
-import com.trm.daysaway.core.domain.Countdown
-import com.trm.daysaway.core.domain.WidgetManager
+import com.trm.daysaway.domain.Countdown
+import com.trm.daysaway.domain.WidgetManager
 import com.trm.daysaway.widget.countdown.CountdownWidget
 import com.trm.daysaway.widget.countdown.CountdownWidgetActions
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
