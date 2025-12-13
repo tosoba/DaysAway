@@ -42,8 +42,8 @@ jobs:
       - name: Upload Release APK
         uses: actions/upload-artifact@v6.0.0
         with:
-          name: release-apk
-          path: ./composeApp/release/composeApp-release.apk
+          name: DaysAway-release
+          path: ./composeApp/build/outputs/apk/release/composeApp-release.apk
       
       - name: Clean up keystore
         if: always()
