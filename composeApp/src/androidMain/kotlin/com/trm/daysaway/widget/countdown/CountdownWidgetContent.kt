@@ -6,11 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.Button
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionSendBroadcast
@@ -20,9 +23,8 @@ import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
-import androidx.glance.layout.Spacer
+import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -33,8 +35,8 @@ import com.kizitonwose.calendar.core.now
 import com.trm.daysaway.R
 import com.trm.daysaway.core.base.util.pluralStringResource
 import com.trm.daysaway.core.base.util.stringResource
-import kotlinx.datetime.LocalDate
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun CountdownWidgetContent(id: GlanceId) {
@@ -42,7 +44,7 @@ fun CountdownWidgetContent(id: GlanceId) {
     Column(
       modifier =
         GlanceModifier.fillMaxSize()
-          .padding(16.dp)
+          .padding(8.dp)
           .appWidgetBackground()
           .background(GlanceTheme.colors.primaryContainer)
           .cornerRadius(16.dp),
@@ -63,15 +65,19 @@ fun CountdownWidgetContent(id: GlanceId) {
           val daysRemaining = state.getDaysRemaining(LocalDate.now())
           when {
             daysRemaining > 0 -> {
-              Text(
-                text =
-                  pluralStringResource(
-                    R.plurals.countdown_widget_days,
-                    daysRemaining.toInt(),
-                    listOf(daysRemaining),
-                  ),
-                style = boldTextStyle(),
-              )
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                  text =
+                    pluralStringResource(
+                      R.plurals.countdown_widget_days,
+                      daysRemaining.toInt(),
+                      listOf(daysRemaining),
+                    ),
+                  style = boldTextStyle(),
+                )
+
+                RefreshButton(id)
+              }
               Text(
                 text = stringResource(R.string.countdown_widget_remaining_until),
                 style = regularTextStyle(),
@@ -97,22 +103,29 @@ fun CountdownWidgetContent(id: GlanceId) {
               )
             }
           }
-
-          Spacer(modifier = GlanceModifier.height(8.dp))
-
-          val context = LocalContext.current
-          val widgetManager = remember { GlanceAppWidgetManager(context) }
-          Button(
-            text = stringResource(R.string.countdown_widget_refresh),
-            onClick =
-              actionSendBroadcast(
-                context.refreshCountdownWidgetIntent(widgetManager.getAppWidgetId(id))
-              ),
-          )
         }
       }
     }
   }
+}
+
+@Composable
+private fun RefreshButton(id: GlanceId) {
+  val context = LocalContext.current
+  val widgetManager = remember { GlanceAppWidgetManager(context) }
+  Image(
+    provider = ImageProvider(R.drawable.refresh),
+    contentDescription = stringResource(R.string.countdown_widget_refresh),
+    colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
+    modifier =
+      GlanceModifier.padding(4.dp)
+        .cornerRadius(4.dp)
+        .clickable(
+          actionSendBroadcast(
+            context.refreshCountdownWidgetIntent(widgetManager.getAppWidgetId(id))
+          )
+        ),
+  )
 }
 
 @Composable
