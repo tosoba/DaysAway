@@ -13,4 +13,5 @@
     <string name="countdown_widget_remaining_until">pozostało do</string>
     <string name="countdown_widget_was_reached_on">osiągnięto dnia</string>
     <string name="countdown_widget_was_reached">osiągnięto.</string>
+    <string name="countdown_widget_refresh">Odśwież</string>
 </resources>

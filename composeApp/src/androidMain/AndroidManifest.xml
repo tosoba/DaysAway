@@ -56,7 +56,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.trm.daysaway.worker.WidgetUpdateWorkerInitializer"
+                android:name="com.trm.daysaway.worker.WidgetRefreshWorkerInitializer"
                 android:value="androidx.startup" />
         </provider>
 

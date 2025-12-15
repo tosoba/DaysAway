@@ -11,4 +11,5 @@
     <string name="countdown_widget_remaining_until">remaining until</string>
     <string name="countdown_widget_was_reached_on">was reached on</string>
     <string name="countdown_widget_was_reached">was reached.</string>
+    <string name="countdown_widget_refresh">Refresh</string>
 </resources>

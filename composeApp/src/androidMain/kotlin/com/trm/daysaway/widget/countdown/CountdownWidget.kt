@@ -12,6 +12,6 @@ class CountdownWidget : GlanceAppWidget() {
   override val stateDefinition = CountdownWidgetStateDefinition
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
-    provideContent { CountdownWidgetContent() }
+    provideContent { CountdownWidgetContent(id) }
   }
 }

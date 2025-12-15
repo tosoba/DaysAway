@@ -3,18 +3,26 @@
 package com.trm.daysaway.widget.countdown
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.Button
+import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalContext
 import androidx.glance.appwidget.CircularProgressIndicator
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -25,11 +33,11 @@ import com.kizitonwose.calendar.core.now
 import com.trm.daysaway.R
 import com.trm.daysaway.core.base.util.pluralStringResource
 import com.trm.daysaway.core.base.util.stringResource
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDate
+import kotlin.time.ExperimentalTime
 
 @Composable
-fun CountdownWidgetContent() {
+fun CountdownWidgetContent(id: GlanceId) {
   GlanceTheme {
     Column(
       modifier =
@@ -38,8 +46,8 @@ fun CountdownWidgetContent() {
           .appWidgetBackground()
           .background(GlanceTheme.colors.primaryContainer)
           .cornerRadius(16.dp),
-      verticalAlignment = Alignment.CenterVertically,
       horizontalAlignment = Alignment.CenterHorizontally,
+      verticalAlignment = Alignment.CenterVertically,
     ) {
       when (val state = currentState<CountdownWidgetState>()) {
         CountdownWidgetState.Empty -> {
@@ -89,6 +97,18 @@ fun CountdownWidgetContent() {
               )
             }
           }
+
+          Spacer(modifier = GlanceModifier.height(8.dp))
+
+          val context = LocalContext.current
+          val widgetManager = remember { GlanceAppWidgetManager(context) }
+          Button(
+            text = stringResource(R.string.countdown_widget_refresh),
+            onClick =
+              actionSendBroadcast(
+                context.refreshCountdownWidgetIntent(widgetManager.getAppWidgetId(id))
+              ),
+          )
         }
       }
     }

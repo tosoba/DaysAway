@@ -22,6 +22,10 @@ internal fun Context.updateCountdownWidgetIntent(widgetId: Int, countdown: Count
     .putExtra(CountdownWidgetExtras.WIDGET_ID, widgetId)
     .putCountdownExtras(countdown)
 
+internal fun Context.refreshCountdownWidgetIntent(widgetId: Int): Intent =
+  actionIntent<CountdownWidgetReceiver>(CountdownWidgetActions.REFRESH)
+    .putExtra(CountdownWidgetExtras.WIDGET_ID, widgetId)
+
 internal fun Intent.putCountdownExtras(countdown: Countdown): Intent =
   putExtra(CountdownWidgetExtras.TARGET_NAME, countdown.targetName)
     .putExtra(CountdownWidgetExtras.TARGET_DATE, countdown.targetDate.toEpochDays())

@@ -28,9 +28,9 @@ actual class DeviceWidgetManager(private val context: Context) : WidgetManager {
     context.sendBroadcast(context.updateCountdownWidgetIntent(widgetId, countdown))
   }
 
-  override fun updateAllCountdownWidgets() {
+  override fun refreshAllCountdownWidgets() {
     context.sendBroadcast(
-      context.actionIntent<CountdownWidgetReceiver>(CountdownWidgetActions.UPDATE_ALL)
+      context.actionIntent<CountdownWidgetReceiver>(CountdownWidgetActions.REFRESH_ALL)
     )
   }
 }

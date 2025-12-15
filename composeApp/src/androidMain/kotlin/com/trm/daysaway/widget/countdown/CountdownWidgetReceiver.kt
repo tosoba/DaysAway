@@ -22,18 +22,29 @@ class CountdownWidgetReceiver : GlanceAppWidgetReceiver() {
           CountdownWidgetState.Ready(extras.toCountdown())
         }
       }
-      CountdownWidgetActions.UPDATE_ALL -> {
+      CountdownWidgetActions.REFRESH -> {
+        val extras = requireNotNull(intent.extras) { "Extras were not provided to REFRESH action." }
+        glanceAppWidget.updateWidget(
+          widgetId = extras.getInt(CountdownWidgetExtras.WIDGET_ID),
+          definition = CountdownWidgetStateDefinition,
+          context = context,
+          updateState = ::refreshWidget,
+        )
+      }
+      CountdownWidgetActions.REFRESH_ALL -> {
         glanceAppWidget.updateAllWidgets(
           definition = CountdownWidgetStateDefinition,
           context = context,
-        ) { state ->
-          when (state) {
-            CountdownWidgetState.Empty,
-            CountdownWidgetState.Loading -> state
-            is CountdownWidgetState.Ready -> state.copy(version = state.version + 1)
-          }
-        }
+          updateState = ::refreshWidget,
+        )
       }
     }
   }
+
+  private fun refreshWidget(state: CountdownWidgetState): CountdownWidgetState =
+    when (state) {
+      CountdownWidgetState.Empty,
+      CountdownWidgetState.Loading -> state
+      is CountdownWidgetState.Ready -> state.copy(version = state.version + 1)
+    }
 }

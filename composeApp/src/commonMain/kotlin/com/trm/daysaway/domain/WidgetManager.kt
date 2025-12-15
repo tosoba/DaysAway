@@ -5,5 +5,5 @@ interface WidgetManager {
 
   fun updateCountdownWidget(widgetId: Int, countdown: Countdown)
 
-  fun updateAllCountdownWidgets()
+  fun refreshAllCountdownWidgets()
 }

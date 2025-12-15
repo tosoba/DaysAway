@@ -8,5 +8,5 @@ actual class DeviceWidgetManager : WidgetManager {
 
   override fun updateCountdownWidget(widgetId: Int, countdown: Countdown) {}
 
-  override fun updateAllCountdownWidgets() {}
+  override fun refreshAllCountdownWidgets() {}
 }

@@ -2,15 +2,17 @@ package com.trm.daysaway.worker
 
 import android.content.Context
 import androidx.startup.Initializer
-import androidx.work.*
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
+import androidx.work.WorkManagerInitializer
 
-class WidgetUpdateWorkerInitializer : Initializer<WidgetUpdateWorkerInitializer.Companion> {
+class WidgetRefreshWorkerInitializer : Initializer<WidgetRefreshWorkerInitializer.Companion> {
   override fun create(context: Context): Companion {
     WorkManager.getInstance(context).apply {
       enqueueUniquePeriodicWork(
-        WidgetUpdateWorker.WORK_NAME,
+        WidgetRefreshWorker.WORK_NAME,
         ExistingPeriodicWorkPolicy.KEEP,
-        WidgetUpdateWorker.workRequest(),
+        WidgetRefreshWorker.workRequest(),
       )
     }
     return Companion

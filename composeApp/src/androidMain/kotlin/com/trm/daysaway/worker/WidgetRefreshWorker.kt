@@ -8,16 +8,16 @@ import androidx.work.WorkerParameters
 import com.trm.daysaway.DaysAwayApp
 import java.time.Duration
 
-class WidgetUpdateWorker(private val context: Context, workerParameters: WorkerParameters) :
+class WidgetRefreshWorker(private val context: Context, workerParameters: WorkerParameters) :
   CoroutineWorker(context, workerParameters) {
   override suspend fun doWork(): Result {
-    (context.applicationContext as DaysAwayApp).widgetManager.updateAllCountdownWidgets()
+    (context.applicationContext as DaysAwayApp).widgetManager.refreshAllCountdownWidgets()
     return Result.success()
   }
 
   internal companion object {
     fun workRequest(): PeriodicWorkRequest =
-      PeriodicWorkRequestBuilder<WidgetUpdateWorker>(
+      PeriodicWorkRequestBuilder<WidgetRefreshWorker>(
           Duration.ofMillis(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS)
         )
         .build()
