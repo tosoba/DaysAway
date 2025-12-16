@@ -3,8 +3,6 @@ package com.trm.daysaway.ui.home
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.os.Build
-import android.os.FileObserver
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,18 +15,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.datastore.dataStoreFile
-import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.trm.daysaway.core.base.util.getLastWidgetId
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 
 private const val WIDGET_HOST_ID = 1024
@@ -36,54 +28,7 @@ private const val WIDGET_HOST_ID = 1024
 @Composable
 actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifier) {
   val context = LocalContext.current
-  val widgetIds = rememberSaveable { mutableStateListOf<Int>() }
-
-  DisposableEffect(Unit) {
-    fun onFileEvent(event: Int, path: String?) {
-      when (event) {
-        FileObserver.DELETE_SELF -> {
-          widgetIds.clear()
-        }
-        FileObserver.DELETE -> {
-          path
-            ?.lastIndexOf('-')
-            ?.takeUnless { it == -1 }
-            ?.let { path.substring(it + 1) }
-            ?.toIntOrNull()
-            ?.let(widgetIds::remove)
-        }
-      }
-    }
-
-    val eventsMask = FileObserver.DELETE or FileObserver.DELETE_SELF
-    val dataStoreDir = context.dataStoreFile("")
-    val observer =
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          object : FileObserver(dataStoreDir, eventsMask) {
-            override fun onEvent(event: Int, path: String?) {
-              onFileEvent(event, path)
-            }
-          }
-        } else {
-          @Suppress("DEPRECATION")
-          object : FileObserver(dataStoreDir.path, eventsMask) {
-            override fun onEvent(event: Int, path: String?) {
-              onFileEvent(event, path)
-            }
-          }
-        }
-        .apply(FileObserver::startWatching)
-
-    onDispose(observer::stopWatching)
-  }
-
-  LifecycleResumeEffect(Unit) {
-    context
-      .getLastWidgetId<CountdownWidgetReceiver>()
-      ?.takeIf { widgetIds.lastOrNull() != it }
-      ?.let(widgetIds::add)
-    onPauseOrDispose {}
-  }
+  val state = rememberHomeScreenState()
 
   val appWidgetHost = remember { AppWidgetHost(context, WIDGET_HOST_ID) }
   val widgetProvider = remember {
@@ -97,8 +42,8 @@ actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifi
       .find { it.provider == componentName }
   }
 
-  Crossfade(widgetIds.isEmpty()) {
-    if (it) {
+  Crossfade(state.widgetIds.isEmpty()) { isEmpty ->
+    if (isEmpty) {
       HomeScreenNoWidgetsText(
         modifier = modifier.verticalScroll(rememberScrollState()),
         bottom = { Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding())) },
@@ -111,7 +56,7 @@ actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifi
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = contentPadding,
       ) {
-        items(widgetIds, key = { widgetId -> widgetId }) { widgetId ->
+        items(state.widgetIds, key = { widgetId -> widgetId }) { widgetId ->
           AndroidView(
             factory = { ctx ->
               appWidgetHost.createView(ctx, widgetId, widgetProvider).apply {

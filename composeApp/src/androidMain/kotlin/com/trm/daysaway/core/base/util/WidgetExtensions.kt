@@ -61,7 +61,10 @@ internal fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
   GlanceAppWidgetManager(this).getGlanceIdBy(widgetId)
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.getLastWidgetId(): Int? =
-  AppWidgetManager.getInstance(this).getAppWidgetIds(widgetReceiverComponentName<T>()).lastOrNull()
+  getAllWidgetIds<T>().lastOrNull()
+
+internal inline fun <reified T : GlanceAppWidgetReceiver> Context.getAllWidgetIds(): IntArray =
+  AppWidgetManager.getInstance(this).getAppWidgetIds(widgetReceiverComponentName<T>())
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.widgetReceiverComponentName():
   ComponentName = ComponentName(applicationContext.packageName, T::class.java.name)
