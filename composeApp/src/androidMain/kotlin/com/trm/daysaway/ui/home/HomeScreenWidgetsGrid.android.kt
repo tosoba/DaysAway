@@ -26,10 +26,12 @@ import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 private const val WIDGET_HOST_ID = 1024
 
 @Composable
-actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifier) {
+actual fun HomeScreenWidgetsGrid(
+  state: HomeScreenState,
+  contentPadding: PaddingValues,
+  modifier: Modifier,
+) {
   val context = LocalContext.current
-  val state = rememberHomeScreenState()
-
   val appWidgetHost = remember { AppWidgetHost(context, WIDGET_HOST_ID) }
   val widgetProvider = remember {
     val componentName =
@@ -56,13 +58,10 @@ actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifi
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = contentPadding,
       ) {
-        items(state.widgetIds, key = { widgetId -> widgetId }) { widgetId ->
+        items(state.widgetIds) { widgetId ->
           AndroidView(
-            factory = { ctx ->
-              appWidgetHost.createView(ctx, widgetId, widgetProvider).apply {
-                setAppWidget(widgetId, widgetProvider)
-              }
-            },
+            factory = { ctx -> appWidgetHost.createView(ctx, widgetId, widgetProvider) },
+            update = { it.setAppWidget(widgetId, widgetProvider) },
             modifier = Modifier.clip(RoundedCornerShape(16.dp)),
           )
         }

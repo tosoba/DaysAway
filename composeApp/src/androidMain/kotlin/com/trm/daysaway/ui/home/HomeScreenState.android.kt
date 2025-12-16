@@ -7,17 +7,35 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.dataStoreFile
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.trm.daysaway.core.base.PlatformContext
+import com.trm.daysaway.core.base.platformContext
 import com.trm.daysaway.core.base.util.getAllWidgetIds
 import com.trm.daysaway.core.base.util.getLastWidgetId
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 
 @Stable
-actual class HomeScreenState(initialWidgetIds: List<Int> = emptyList()) {
-  val widgetIds = initialWidgetIds.toMutableStateList()
+actual class HomeScreenState {
+  constructor(initialWidgetIds: List<Int>) {
+    widgetIds = initialWidgetIds.toMutableStateList()
+  }
+
+  constructor(context: PlatformContext) {
+    widgetIds = getAllWidgetIds(context).toMutableStateList()
+  }
+
+  val widgetIds: SnapshotStateList<Int>
+
+  actual fun refresh(context: PlatformContext) {
+    widgetIds.clear()
+    widgetIds.addAll(getAllWidgetIds(context))
+  }
+
+  private fun getAllWidgetIds(context: PlatformContext): List<Int> =
+    context.getAllWidgetIds<CountdownWidgetReceiver>().toList()
 
   companion object {
     val Saver = listSaver(save = { it.widgetIds.toList() }, restore = ::HomeScreenState)
@@ -26,13 +44,9 @@ actual class HomeScreenState(initialWidgetIds: List<Int> = emptyList()) {
 
 @Composable
 actual fun rememberHomeScreenState(vararg inputs: Any?): HomeScreenState {
-  val context = LocalContext.current
+  val context = platformContext()
   val state =
-    rememberSaveable(
-      inputs,
-      saver = HomeScreenState.Saver,
-      init = { HomeScreenState(context.getAllWidgetIds<CountdownWidgetReceiver>().toList()) },
-    )
+    rememberSaveable(inputs, saver = HomeScreenState.Saver, init = { HomeScreenState(context) })
 
   DisposableEffect(Unit) {
     fun onFileEvent(event: Int, path: String?) {

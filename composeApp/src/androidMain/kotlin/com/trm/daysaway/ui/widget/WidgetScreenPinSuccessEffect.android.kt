@@ -2,9 +2,9 @@ package com.trm.daysaway.ui.widget
 
 import android.content.IntentFilter
 import androidx.compose.runtime.Composable
-import com.trm.daysaway.core.base.ui.BroadcastReceiverEffect
 import com.trm.daysaway.core.base.util.getLastWidgetId
 import com.trm.daysaway.core.base.util.showWidgetPinnedToast
+import com.trm.daysaway.core.ui.BroadcastReceiverEffect
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 import com.trm.daysaway.widget.countdown.toCountdown
 import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent

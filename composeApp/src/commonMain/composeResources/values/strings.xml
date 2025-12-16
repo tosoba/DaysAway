@@ -6,6 +6,7 @@
     <string name="widget_screen_edit_name">Edit name</string>
     <string name="widget_screen_go_back">Go back</string>
     <string name="reset">Reset</string>
+    <string name="refresh">Refresh</string>
     <string name="confirm">Confirm</string>
     <string name="widget_screen_enter_custom_name">Enter a custom countdown target name</string>
     <string name="widget_screen_target_name">Target name</string>

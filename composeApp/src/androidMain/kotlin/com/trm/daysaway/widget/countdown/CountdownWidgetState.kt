@@ -3,7 +3,7 @@
 package com.trm.daysaway.widget.countdown
 
 import com.kizitonwose.calendar.core.now
-import com.trm.daysaway.core.base.util.LocalDateListSerializer
+import com.trm.daysaway.core.base.LocalDateListSerializer
 import com.trm.daysaway.domain.Countdown
 import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDate

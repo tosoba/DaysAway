@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-actual fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifier) {
-  val state = rememberHomeScreenState()
-}
+actual fun HomeScreenWidgetsGrid(
+  state: HomeScreenState,
+  contentPadding: PaddingValues,
+  modifier: Modifier,
+) {}

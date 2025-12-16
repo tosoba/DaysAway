@@ -6,6 +6,7 @@
     <string name="widget_screen_edit_name">Edytuj nazwę</string>
     <string name="widget_screen_go_back">Wróć</string>
     <string name="reset">Resetuj</string>
+    <string name="refresh">Odśwież</string>
     <string name="confirm">Potwierdź</string>
     <string name="widget_screen_enter_custom_name">Wprowadź własną nazwę celu odliczania</string>
     <string name="widget_screen_target_name">Nazwa celu</string>

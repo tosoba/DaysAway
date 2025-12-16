@@ -1,4 +1,4 @@
-package com.trm.daysaway.core.base.ui
+package com.trm.daysaway.core.ui
 
 import android.content.BroadcastReceiver
 import android.content.Context

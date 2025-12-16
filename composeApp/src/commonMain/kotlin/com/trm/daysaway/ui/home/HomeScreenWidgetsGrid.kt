@@ -5,4 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-expect fun HomeScreenWidgetsGrid(contentPadding: PaddingValues, modifier: Modifier = Modifier)
+expect fun HomeScreenWidgetsGrid(
+  state: HomeScreenState,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
+)

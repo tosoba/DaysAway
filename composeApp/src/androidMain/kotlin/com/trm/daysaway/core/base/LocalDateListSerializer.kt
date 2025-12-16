@@ -1,4 +1,4 @@
-package com.trm.daysaway.core.base.util
+package com.trm.daysaway.core.base
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.serializers.LocalDateIso8601Serializer
