@@ -5,9 +5,11 @@ import android.os.FileObserver
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.datastore.dataStoreFile
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -18,27 +20,36 @@ import com.trm.daysaway.core.base.util.getLastWidgetId
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 
 @Stable
-actual class HomeScreenState {
-  constructor(initialWidgetIds: List<Int>) {
-    widgetIds = initialWidgetIds.toMutableStateList()
-  }
+actual class HomeScreenState(refreshCount: Int, initialWidgetIds: List<Int>) {
+  constructor(
+    context: PlatformContext
+  ) : this(refreshCount = 0, initialWidgetIds = getAllWidgetIds(context))
 
-  constructor(context: PlatformContext) {
-    widgetIds = getAllWidgetIds(context).toMutableStateList()
-  }
+  var refreshCount by mutableIntStateOf(refreshCount)
+    private set
 
-  val widgetIds: SnapshotStateList<Int>
+  val widgetIds = initialWidgetIds.toMutableStateList()
 
   actual fun refresh(context: PlatformContext) {
     widgetIds.clear()
+    ++refreshCount
     widgetIds.addAll(getAllWidgetIds(context))
   }
 
-  private fun getAllWidgetIds(context: PlatformContext): List<Int> =
-    context.getAllWidgetIds<CountdownWidgetReceiver>().toList()
-
   companion object {
-    val Saver = listSaver(save = { it.widgetIds.toList() }, restore = ::HomeScreenState)
+    val Saver =
+      listSaver<HomeScreenState, Int>(
+        save = { state ->
+          buildList {
+            add(state.refreshCount)
+            addAll(state.widgetIds)
+          }
+        },
+        restore = { HomeScreenState(refreshCount = it.first(), initialWidgetIds = it.drop(1)) },
+      )
+
+    private fun getAllWidgetIds(context: PlatformContext): List<Int> =
+      context.getAllWidgetIds<CountdownWidgetReceiver>().toList()
   }
 }
 

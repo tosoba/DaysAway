@@ -32,17 +32,18 @@ actual fun HomeScreenWidgetsGrid(
   modifier: Modifier,
 ) {
   val context = LocalContext.current
-  val appWidgetHost = remember { AppWidgetHost(context, WIDGET_HOST_ID) }
-  val widgetProvider = remember {
-    val componentName =
-      ComponentName(
-        context.applicationContext.packageName,
-        CountdownWidgetReceiver::class.java.name,
-      )
-    AppWidgetManager.getInstance(context)
-      .getInstalledProvidersForPackage(context.packageName, null)
-      .find { it.provider == componentName }
-  }
+  val appWidgetHost = remember(state.refreshCount) { AppWidgetHost(context, WIDGET_HOST_ID) }
+  val widgetProvider =
+    remember(state.refreshCount) {
+      val componentName =
+        ComponentName(
+          context.applicationContext.packageName,
+          CountdownWidgetReceiver::class.java.name,
+        )
+      AppWidgetManager.getInstance(context)
+        .getInstalledProvidersForPackage(context.packageName, null)
+        .find { it.provider == componentName }
+    }
 
   Crossfade(state.widgetIds.isEmpty()) { isEmpty ->
     if (isEmpty) {
@@ -58,7 +59,8 @@ actual fun HomeScreenWidgetsGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = contentPadding,
       ) {
-        items(state.widgetIds) { widgetId ->
+        items(state.widgetIds, key = { widgetId -> "${state.refreshCount}-$widgetId" }) { widgetId
+          ->
           AndroidView(
             factory = { ctx -> appWidgetHost.createView(ctx, widgetId, widgetProvider) },
             update = { it.setAppWidget(widgetId, widgetProvider) },
