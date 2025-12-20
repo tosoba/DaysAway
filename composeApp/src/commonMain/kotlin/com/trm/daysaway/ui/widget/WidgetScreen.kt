@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +68,7 @@ import com.kizitonwose.calendar.core.plusYears
 import com.trm.daysaway.core.base.util.displayText
 import com.trm.daysaway.domain.Countdown
 import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.RobotoMono
 import daysaway.composeapp.generated.resources.cancel
 import daysaway.composeapp.generated.resources.confirm
 import daysaway.composeapp.generated.resources.reset
@@ -75,12 +78,13 @@ import daysaway.composeapp.generated.resources.widget_screen_edit_name
 import daysaway.composeapp.generated.resources.widget_screen_enter_custom_name
 import daysaway.composeapp.generated.resources.widget_screen_go_back
 import daysaway.composeapp.generated.resources.widget_screen_target_name
-import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
+import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) {
@@ -189,13 +193,10 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
             modifier =
               Modifier.fillMaxSize()
                 .padding(
-                  vertical = 2.dp,
-                  horizontal =
-                    if (dayOfWeek != daysOfWeek.first() && dayOfWeek != daysOfWeek.last()) {
-                      2.dp
-                    } else {
-                      0.dp
-                    },
+                  top = 2.dp,
+                  bottom = 2.dp,
+                  start = if (dayOfWeek == daysOfWeek.first()) 0.dp else 2.dp,
+                  end = if (dayOfWeek == daysOfWeek.last()) 0.dp else 2.dp,
                 ),
             onClick = { state.onDateIncludedChange(it.date) },
           )
@@ -290,10 +291,11 @@ private fun DayToggleButton(
   ToggleButton(
     enabled = enabled,
     checked = enabled && included,
+    contentPadding = PaddingValues(4.dp),
     modifier = modifier,
     onCheckedChange = { onClick(day) },
   ) {
-    Box(modifier = Modifier.heightIn(max = 64.dp), contentAlignment = Alignment.Center) {
+    Box(contentAlignment = Alignment.Center) {
       ToggleButtonText(
         text = day.date.day.toString(),
         color =
@@ -332,6 +334,7 @@ private fun DayOfWeekToggleButtons(
       ToggleButton(
         checked = checked,
         onCheckedChange = { state.onDayOfWeekIncludedChange(dayOfWeek = dayOfWeek, included = it) },
+        contentPadding = PaddingValues(4.dp),
         modifier = Modifier.weight(1f),
       ) {
         ToggleButtonText(
@@ -339,6 +342,7 @@ private fun DayOfWeekToggleButtons(
           color =
             if (checked) MaterialTheme.colorScheme.surface
             else MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.fillMaxWidth(),
         )
       }
 
@@ -356,7 +360,9 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
     textAlign = TextAlign.Center,
     color = color,
     text = text,
+    autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.labelLarge.fontSize),
     style = MaterialTheme.typography.labelLarge,
+    fontFamily = FontFamily(Font(Res.font.RobotoMono)),
   )
 }
 
