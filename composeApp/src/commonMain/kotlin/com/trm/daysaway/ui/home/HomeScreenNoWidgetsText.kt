@@ -48,12 +48,7 @@ fun HomeScreenNoWidgetsText(modifier: Modifier = Modifier, bottom: @Composable (
 
         WidgetsIcon()
 
-        Column(
-          modifier = Modifier.padding(horizontal = 16.dp),
-          verticalArrangement = Arrangement.Center,
-        ) {
-          WidgetsText()
-        }
+        Column(verticalArrangement = Arrangement.Center) { WidgetsText(TextAlign.Start) }
       }
       bottom()
     }
@@ -64,7 +59,7 @@ fun HomeScreenNoWidgetsText(modifier: Modifier = Modifier, bottom: @Composable (
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       WidgetsIcon()
-      WidgetsText()
+      WidgetsText(TextAlign.Center)
       bottom()
     }
   }
@@ -72,16 +67,18 @@ fun HomeScreenNoWidgetsText(modifier: Modifier = Modifier, bottom: @Composable (
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun ColumnScope.WidgetsText() {
+private fun ColumnScope.WidgetsText(textAlign: TextAlign) {
   Text(
     stringResource(Res.string.home_screen_no_widgets_added),
     style = MaterialTheme.typography.titleLargeEmphasized,
-    textAlign = TextAlign.Start,
+    textAlign = textAlign,
+    modifier = Modifier.padding(horizontal = 16.dp),
   )
   Text(
     stringResource(Res.string.home_screen_no_widgets_create_one),
     style = MaterialTheme.typography.bodyMedium,
-    textAlign = TextAlign.Start,
+    textAlign = textAlign,
+    modifier = Modifier.padding(horizontal = 16.dp),
   )
 }
 
