@@ -5,8 +5,6 @@ package com.trm.daysaway.ui.home
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
@@ -17,14 +15,10 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeExtendedFloatingActionButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.trm.daysaway.core.base.platformContext
 import daysaway.composeapp.generated.resources.Res
@@ -54,29 +48,11 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
     },
     floatingActionButtonPosition = FabPosition.Center,
     floatingActionButton = {
-      LargeExtendedFloatingActionButton(onClick = onAddWidgetClick) {
-        Text(
-          text =
-            buildAnnotatedString {
-              appendInlineContent(ICON_PLACEHOLDER)
-              append(' ')
-              append(stringResource(Res.string.add_widget))
-            },
-          inlineContent =
-            mapOf(
-              ICON_PLACEHOLDER to
-                InlineTextContent(
-                  Placeholder(
-                    width = MaterialTheme.typography.headlineSmall.fontSize,
-                    height = MaterialTheme.typography.headlineSmall.fontSize,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter,
-                  )
-                ) {
-                  Icon(Icons.Default.Add, contentDescription = null)
-                }
-            ),
-        )
-      }
+      LargeExtendedFloatingActionButton(
+        onClick = onAddWidgetClick,
+        icon = { Icon(Icons.Default.Add, contentDescription = null) },
+        text = { Text(text = stringResource(Res.string.add_widget)) },
+      )
     },
   ) { contentPadding ->
     HomeScreenWidgetsGrid(
@@ -86,5 +62,3 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
     )
   }
 }
-
-private const val ICON_PLACEHOLDER = "icon"
