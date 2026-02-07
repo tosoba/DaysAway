@@ -20,4 +20,17 @@
     <string name="widget_screen_description_for"> for %s</string>
     <string name="home_screen_no_widgets_added">No widgets added yet.</string>
     <string name="home_screen_no_widgets_create_one">Create one using the button below.</string>
+
+    <string name="countdown_widget_label">Countdown</string>
+    <string name="countdown_widget_description">Day countdown to a target date</string>
+
+    <string name="countdown_widget_no_target_chosen">No target chosen</string>
+    <plurals name="countdown_widget_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="countdown_widget_remaining_until">remaining until</string>
+    <string name="countdown_widget_was_reached_on">was reached on</string>
+    <string name="countdown_widget_was_reached">was reached.</string>
+    <string name="countdown_widget_refresh">Refresh</string>
 </resources>

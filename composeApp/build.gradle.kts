@@ -2,14 +2,22 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidApplication)
+  alias(libs.plugins.androidMultiplatformLibrary)
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
-  androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
+  compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
+
+  androidLibrary {
+    namespace = "com.trm.daysaway"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    minSdk = libs.versions.android.minSdk.get().toInt()
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
+    androidResources { enable = true }
+  }
 
   listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
@@ -20,12 +28,8 @@ kotlin {
 
   sourceSets {
     androidMain.dependencies {
-      implementation(libs.androidx.activity.compose)
-      implementation(libs.androidx.core.splashscreen)
       implementation(libs.androidx.glance.appwidget)
       implementation(libs.androidx.glance.material3)
-      implementation(libs.androidx.startup.runtime)
-      implementation(libs.androidx.work.runtime.ktx)
     }
 
     commonMain.dependencies {
@@ -53,26 +57,3 @@ kotlin {
     commonTest.dependencies { implementation(libs.common.kotlin.test) }
   }
 }
-
-android {
-  namespace = "com.trm.daysaway"
-  compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-  defaultConfig {
-    applicationId = "com.trm.daysaway"
-    minSdk = libs.versions.android.minSdk.get().toInt()
-    targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = 1
-    versionName = "1.0"
-  }
-
-  packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-}
-
-dependencies { debugImplementation(compose.uiTooling) }

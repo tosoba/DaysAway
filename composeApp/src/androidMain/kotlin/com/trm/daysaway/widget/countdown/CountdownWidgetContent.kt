@@ -2,8 +2,13 @@
 
 package com.trm.daysaway.widget.countdown
 
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -33,74 +38,87 @@ import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import com.kizitonwose.calendar.core.now
 import com.trm.daysaway.R
-import com.trm.daysaway.core.base.util.pluralStringResource
-import com.trm.daysaway.core.base.util.stringResource
-import kotlin.time.ExperimentalTime
+import daysaway.composeapp.generated.resources.Res
+import daysaway.composeapp.generated.resources.countdown_widget_days
+import daysaway.composeapp.generated.resources.countdown_widget_no_target_chosen
+import daysaway.composeapp.generated.resources.countdown_widget_refresh
+import daysaway.composeapp.generated.resources.countdown_widget_remaining_until
+import daysaway.composeapp.generated.resources.countdown_widget_was_reached
+import daysaway.composeapp.generated.resources.countdown_widget_was_reached_on
+import daysaway.composeapp.generated.resources.refresh
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun CountdownWidgetContent(id: GlanceId) {
-  GlanceTheme {
-    Column(
-      modifier =
-        GlanceModifier.fillMaxSize()
-          .padding(8.dp)
-          .appWidgetBackground()
-          .background(GlanceTheme.colors.primaryContainer)
-          .cornerRadius(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      when (val state = currentState<CountdownWidgetState>()) {
-        CountdownWidgetState.Empty -> {
-          Text(
-            text = stringResource(R.string.countdown_widget_no_target_chosen),
-            style = mediumTextStyle(),
-          )
-        }
-        CountdownWidgetState.Loading -> {
-          CircularProgressIndicator()
-        }
-        is CountdownWidgetState.Ready -> {
-          val daysRemaining = state.getDaysRemaining(LocalDate.now())
-          when {
-            daysRemaining > 0 -> {
-              Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                  text =
-                    pluralStringResource(
-                      R.plurals.countdown_widget_days,
-                      daysRemaining.toInt(),
-                      listOf(daysRemaining),
-                    ),
-                  style = boldTextStyle(),
-                )
+  CompositionLocalProvider(
+    LocalConfiguration provides Configuration(),
+    LocalDensity provides Density(1f),
+  ) {
+    GlanceTheme {
+      Column(
+        modifier =
+          GlanceModifier.fillMaxSize()
+            .padding(8.dp)
+            .appWidgetBackground()
+            .background(GlanceTheme.colors.primaryContainer)
+            .cornerRadius(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        when (val state = currentState<CountdownWidgetState>()) {
+          CountdownWidgetState.Empty -> {
+            Text(
+              text = stringResource(Res.string.countdown_widget_no_target_chosen),
+              style = mediumTextStyle(),
+            )
+          }
+          CountdownWidgetState.Loading -> {
+            CircularProgressIndicator()
+          }
+          is CountdownWidgetState.Ready -> {
+            val daysRemaining = state.getDaysRemaining(LocalDate.now())
+            when {
+              daysRemaining > 0 -> {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  Text(
+                    text =
+                      pluralStringResource(
+                        resource = Res.plurals.countdown_widget_days,
+                        quantity = daysRemaining.toInt(),
+                        daysRemaining.toInt(),
+                      ),
+                    style = boldTextStyle(),
+                  )
 
-                RefreshButton(id)
+                  RefreshButton(id)
+                }
+                Text(
+                  text = stringResource(Res.string.countdown_widget_remaining_until),
+                  style = regularTextStyle(),
+                )
+                Text(
+                  text = "${state.targetName ?: state.formattedTargetDate}.",
+                  style = mediumTextStyle(),
+                )
               }
-              Text(
-                text = stringResource(R.string.countdown_widget_remaining_until),
-                style = regularTextStyle(),
-              )
-              Text(
-                text = "${state.targetName ?: state.formattedTargetDate}.",
-                style = mediumTextStyle(),
-              )
-            }
-            !state.targetName.isNullOrBlank() -> {
-              Text(text = state.targetName, style = mediumTextStyle())
-              Text(
-                text = stringResource(R.string.countdown_widget_was_reached_on),
-                style = regularTextStyle(),
-              )
-              Text(text = "${state.formattedTargetDate}.", style = mediumTextStyle())
-            }
-            else -> {
-              Text(text = state.formattedTargetDate, style = mediumTextStyle())
-              Text(
-                text = stringResource(R.string.countdown_widget_was_reached),
-                style = regularTextStyle(),
-              )
+              !state.targetName.isNullOrBlank() -> {
+                Text(text = state.targetName, style = mediumTextStyle())
+                Text(
+                  text = stringResource(Res.string.countdown_widget_was_reached_on),
+                  style = regularTextStyle(),
+                )
+                Text(text = "${state.formattedTargetDate}.", style = mediumTextStyle())
+              }
+              else -> {
+                Text(text = state.formattedTargetDate, style = mediumTextStyle())
+                Text(
+                  text = stringResource(Res.string.countdown_widget_was_reached),
+                  style = regularTextStyle(),
+                )
+              }
             }
           }
         }
@@ -115,7 +133,7 @@ private fun RefreshButton(id: GlanceId) {
   val widgetManager = remember { GlanceAppWidgetManager(context) }
   Image(
     provider = ImageProvider(R.drawable.refresh),
-    contentDescription = stringResource(R.string.countdown_widget_refresh),
+    contentDescription = stringResource(Res.string.countdown_widget_refresh),
     colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
     modifier =
       GlanceModifier.padding(4.dp)
