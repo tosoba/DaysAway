@@ -2,16 +2,4 @@
     <string name="app_name">DaysAway</string>
     <string name="countdown_widget_label">Odliczanie</string>
     <string name="countdown_widget_description">Odliczanie dni do daty docelowej</string>
-
-    <string name="countdown_widget_no_target_chosen">Nie wybrano celu</string>
-    <plurals name="countdown_widget_days">
-        <item quantity="one">%d dzień</item>
-        <item quantity="few">%d dni</item>
-        <item quantity="many">%d dni</item>
-        <item quantity="other">%d dni</item>
-    </plurals>
-    <string name="countdown_widget_remaining_until">pozostało do</string>
-    <string name="countdown_widget_was_reached_on">osiągnięto dnia</string>
-    <string name="countdown_widget_was_reached">osiągnięto.</string>
-    <string name="countdown_widget_refresh">Odśwież</string>
 </resources>

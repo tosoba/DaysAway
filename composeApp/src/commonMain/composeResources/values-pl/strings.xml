@@ -22,4 +22,16 @@
     <string name="widget_screen_description_for"> dla %s</string>
     <string name="home_screen_no_widgets_added">Nie dodano jeszcze żadnych widgetów.</string>
     <string name="home_screen_no_widgets_create_one">Utwórz widget za pomocą przycisku poniżej.</string>
+
+    <string name="countdown_widget_no_target_chosen">Nie wybrano celu</string>
+    <plurals name="countdown_widget_days">
+        <item quantity="one">%1$d dzień</item>
+        <item quantity="few">%1$d dni</item>
+        <item quantity="many">%1$d dni</item>
+        <item quantity="other">%1$d dni</item>
+    </plurals>
+    <string name="countdown_widget_remaining_until">pozostało do</string>
+    <string name="countdown_widget_was_reached_on">osiągnięto dnia</string>
+    <string name="countdown_widget_was_reached">osiągnięto.</string>
+    <string name="countdown_widget_refresh">Odśwież</string>
 </resources>
