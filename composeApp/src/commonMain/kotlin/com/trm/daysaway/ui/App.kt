@@ -6,23 +6,24 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.trm.daysaway.domain.Countdown
 import com.trm.daysaway.core.ui.util.popLast
 import com.trm.daysaway.core.ui.util.pushIfLastNotEqualTo
+import com.trm.daysaway.domain.Countdown
 import com.trm.daysaway.ui.home.HomeScreen
-import com.trm.daysaway.ui.widget.WidgetScreen
+import com.trm.daysaway.ui.countdownEditor.CountdownEditorScreen
+import com.trm.daysaway.ui.countdownEditor.CountdownEditorConfirmationSuccessEffect
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun App(onWidgetConfirmClick: (Countdown) -> Unit) {
+fun App(onCountdownConfirmClick: (Countdown) -> Unit) {
   val backStack =
     rememberNavBackStack(
       SavedStateConfiguration {
         serializersModule = SerializersModule {
           polymorphic(NavKey::class) {
             subclass(Home::class, Home.serializer())
-            subclass(Widget::class, Widget.serializer())
+            subclass(CountdownEditor::class, CountdownEditor.serializer())
           }
         }
       },
@@ -34,10 +35,16 @@ fun App(onWidgetConfirmClick: (Countdown) -> Unit) {
     onBack = backStack::popLast,
     entryProvider =
       entryProvider {
-        entry<Home> { HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(Widget) }) }
+        entry<Home> {
+          HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(CountdownEditor) })
+        }
+        entry<CountdownEditor> {
+          CountdownEditorConfirmationSuccessEffect(action = backStack::popLast)
 
-        entry<Widget> {
-          WidgetScreen(onConfirmClick = onWidgetConfirmClick, navigateBack = backStack::popLast)
+          CountdownEditorScreen(
+            onConfirmClick = onCountdownConfirmClick,
+            navigateBack = backStack::popLast,
+          )
         }
       },
   )

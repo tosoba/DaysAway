@@ -5,4 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object Home : NavKey
 
-@Serializable data object Widget : NavKey
+@Serializable data object CountdownEditor : NavKey

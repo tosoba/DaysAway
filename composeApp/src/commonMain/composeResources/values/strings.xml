@@ -1,25 +1,26 @@
 <resources>
-    <string name="home_screen_title">DaysAway</string>
-    <string name="add_widget">Add widget</string>
-    <string name="widget_screen_confirm_target_date">Confirm target date</string>
-    <string name="widget_screen_choose_target_date">Choose a target date</string>
-    <string name="widget_screen_edit_name">Edit name</string>
-    <string name="widget_screen_go_back">Go back</string>
+    <string name="add_countdown">Add countdown</string>
     <string name="reset">Reset</string>
     <string name="refresh">Refresh</string>
     <string name="confirm">Confirm</string>
-    <string name="widget_screen_enter_custom_name">Enter a custom countdown target name</string>
-    <string name="widget_screen_target_name">Target name</string>
     <string name="cancel">Cancel</string>
 
-    <plurals name="widget_screen_days_remaining_description">
+    <string name="home_screen_title">DaysAway</string>
+    <string name="home_screen_no_widgets_added">No countdowns added yet.</string>
+    <string name="home_screen_no_widgets_create_one">Create one using the button below.</string>
+
+    <string name="countdown_editor_screen_confirm_target_date">Confirm target date</string>
+    <string name="countdown_editor_screen_choose_target_date">Choose a target date</string>
+    <string name="countdown_editor_screen_edit_name">Edit name</string>
+    <string name="countdown_editor_screen_go_back">Go back</string>
+    <string name="countdown_editor_screen_enter_custom_name">Enter a custom countdown target name</string>
+    <string name="countdown_editor_screen_target_name">Target name</string>
+    <plurals name="countdown_editor_screen_days_remaining_description">
         <item quantity="one">%1$d day remaining until %2$s</item>
         <item quantity="other">%1$d days remaining until %2$s</item>
     </plurals>
-    <string name="widget_screen_no_target_date_chosen">No target date chosen</string>
-    <string name="widget_screen_description_for"> for %s</string>
-    <string name="home_screen_no_widgets_added">No widgets added yet.</string>
-    <string name="home_screen_no_widgets_create_one">Create one using the button below.</string>
+    <string name="countdown_editor_screen_no_target_date_chosen">No target date chosen</string>
+    <string name="countdown_editor_screen_description_for"> for %s</string>
 
     <string name="countdown_widget_no_target_chosen">No target chosen</string>
     <plurals name="countdown_widget_days">

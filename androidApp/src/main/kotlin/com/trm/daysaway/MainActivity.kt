@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
       ) {
         val scope = rememberCoroutineScope()
         App(
-          onWidgetConfirmClick = {
+          onCountdownConfirmClick = {
             scope.launch { ((application as DaysAwayApp).widgetManager).addCountdownWidget(it) }
           }
         )

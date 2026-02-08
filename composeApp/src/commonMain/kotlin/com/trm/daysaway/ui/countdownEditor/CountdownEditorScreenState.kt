@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.trm.daysaway.ui.widget
+package com.trm.daysaway.ui.countdownEditor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -15,18 +15,18 @@ import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
 import com.trm.daysaway.domain.Countdown
 import daysaway.composeapp.generated.resources.Res
-import daysaway.composeapp.generated.resources.widget_screen_days_remaining_description
-import daysaway.composeapp.generated.resources.widget_screen_description_for
-import daysaway.composeapp.generated.resources.widget_screen_no_target_date_chosen
-import kotlin.time.ExperimentalTime
+import daysaway.composeapp.generated.resources.countdown_editor_screen_days_remaining_description
+import daysaway.composeapp.generated.resources.countdown_editor_screen_description_for
+import daysaway.composeapp.generated.resources.countdown_editor_screen_no_target_date_chosen
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
 
 @Stable
-class WidgetScreenState(
+class CountdownEditorScreenState(
   targetName: String? = null,
   targetDate: LocalDate = LocalDate.now(),
   excludedDays: List<LocalDate> = emptyList(),
@@ -47,16 +47,16 @@ class WidgetScreenState(
     get() =
       if (daysRemaining > 0) {
         pluralStringResource(
-          Res.plurals.widget_screen_days_remaining_description,
+          Res.plurals.countdown_editor_screen_days_remaining_description,
           daysRemaining.toInt(),
           daysRemaining,
           targetName ?: targetDate.format(LocalDate.Formats.ISO),
         )
       } else {
         buildString {
-          append(stringResource(Res.string.widget_screen_no_target_date_chosen))
+          append(stringResource(Res.string.countdown_editor_screen_no_target_date_chosen))
           targetName?.takeIf(String::isNotBlank)?.let {
-            append(stringResource(Res.string.widget_screen_description_for, it))
+            append(stringResource(Res.string.countdown_editor_screen_description_for, it))
           }
         }
       }
@@ -132,7 +132,7 @@ class WidgetScreenState(
     private const val DATES = "DATES"
     private const val TARGET_NAME = "TARGET_NAME"
 
-    val Saver: Saver<WidgetScreenState, *> =
+    val Saver: Saver<CountdownEditorScreenState, *> =
       mapSaver(
         save = {
           buildMap {
@@ -148,7 +148,7 @@ class WidgetScreenState(
         },
         restore = {
           val dates = it[DATES] as List<*>
-          WidgetScreenState(
+          CountdownEditorScreenState(
             targetName = it[TARGET_NAME] as? String,
             targetDate = dates.first() as LocalDate,
             excludedDays = dates.drop(1).filterIsInstance<LocalDate>(),

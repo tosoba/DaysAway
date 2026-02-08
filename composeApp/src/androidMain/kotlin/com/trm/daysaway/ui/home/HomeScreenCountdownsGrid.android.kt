@@ -26,7 +26,7 @@ import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 private const val WIDGET_HOST_ID = 1024
 
 @Composable
-actual fun HomeScreenWidgetsGrid(
+actual fun HomeScreenCountdownsGrid(
   state: HomeScreenState,
   contentPadding: PaddingValues,
   modifier: Modifier,

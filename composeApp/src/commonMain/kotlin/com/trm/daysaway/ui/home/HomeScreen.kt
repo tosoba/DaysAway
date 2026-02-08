@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.trm.daysaway.core.base.platformContext
 import daysaway.composeapp.generated.resources.Res
-import daysaway.composeapp.generated.resources.add_widget
+import daysaway.composeapp.generated.resources.add_countdown
 import daysaway.composeapp.generated.resources.home_screen_title
 import daysaway.composeapp.generated.resources.refresh
 import org.jetbrains.compose.resources.stringResource
@@ -51,11 +51,11 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
       LargeExtendedFloatingActionButton(
         onClick = onAddWidgetClick,
         icon = { Icon(Icons.Default.Add, contentDescription = null) },
-        text = { Text(text = stringResource(Res.string.add_widget)) },
+        text = { Text(text = stringResource(Res.string.add_countdown)) },
       )
     },
   ) { contentPadding ->
-    HomeScreenWidgetsGrid(
+    HomeScreenCountdownsGrid(
       state = state,
       contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 112.dp),
       modifier = Modifier.fillMaxSize().padding(contentPadding),

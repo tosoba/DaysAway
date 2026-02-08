@@ -1,4 +1,4 @@
-package com.trm.daysaway.ui.widget
+package com.trm.daysaway.ui.countdownEditor
 
 import android.content.IntentFilter
 import androidx.compose.runtime.Composable
@@ -10,7 +10,7 @@ import com.trm.daysaway.widget.countdown.toCountdown
 import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent
 
 @Composable
-actual fun WidgetScreenPinSuccessEffect(action: () -> Unit) {
+actual fun CountdownEditorConfirmationSuccessEffect(action: () -> Unit) {
   BroadcastReceiverEffect(intentFilter = IntentFilter(WIDGET_PIN_SUCCESS_ACTION)) { context, intent
     ->
     context.sendBroadcast(

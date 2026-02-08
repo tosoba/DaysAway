@@ -1,10 +1,6 @@
-@file:OptIn(
-  ExperimentalMaterial3ExpressiveApi::class,
-  ExperimentalTime::class,
-  ExperimentalMaterial3Api::class,
-)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.trm.daysaway.ui.widget
+package com.trm.daysaway.ui.countdownEditor
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,24 +67,24 @@ import daysaway.composeapp.generated.resources.Res
 import daysaway.composeapp.generated.resources.RobotoMono
 import daysaway.composeapp.generated.resources.cancel
 import daysaway.composeapp.generated.resources.confirm
+import daysaway.composeapp.generated.resources.countdown_editor_screen_choose_target_date
+import daysaway.composeapp.generated.resources.countdown_editor_screen_confirm_target_date
+import daysaway.composeapp.generated.resources.countdown_editor_screen_edit_name
+import daysaway.composeapp.generated.resources.countdown_editor_screen_enter_custom_name
+import daysaway.composeapp.generated.resources.countdown_editor_screen_go_back
+import daysaway.composeapp.generated.resources.countdown_editor_screen_target_name
 import daysaway.composeapp.generated.resources.reset
-import daysaway.composeapp.generated.resources.widget_screen_choose_target_date
-import daysaway.composeapp.generated.resources.widget_screen_confirm_target_date
-import daysaway.composeapp.generated.resources.widget_screen_edit_name
-import daysaway.composeapp.generated.resources.widget_screen_enter_custom_name
-import daysaway.composeapp.generated.resources.widget_screen_go_back
-import daysaway.composeapp.generated.resources.widget_screen_target_name
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.ExperimentalTime
 
 @Composable
-fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) {
-  val state = rememberSaveable(saver = WidgetScreenState.Saver, init = ::WidgetScreenState)
+fun CountdownEditorScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) {
+  val state =
+    rememberSaveable(saver = CountdownEditorScreenState.Saver, init = ::CountdownEditorScreenState)
 
   val scope = rememberCoroutineScope()
   var targetNameSheetVisible by rememberSaveable { mutableStateOf(false) }
@@ -96,16 +92,16 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
   val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val buttonHeight = ButtonDefaults.MediumContainerHeight
 
-  WidgetScreenPinSuccessEffect(navigateBack)
-
   Scaffold(
     modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     topBar = {
       TwoRowsTopAppBar(
         title = {
           Text(
-            if (state.targetDateValid) stringResource(Res.string.widget_screen_confirm_target_date)
-            else stringResource(Res.string.widget_screen_choose_target_date)
+            stringResource(
+              if (state.targetDateValid) Res.string.countdown_editor_screen_confirm_target_date
+              else Res.string.countdown_editor_screen_choose_target_date
+            )
           )
         },
         subtitle = { Text(text = state.targetDescription) },
@@ -113,7 +109,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           IconButton(onClick = { targetNameSheetVisible = true }) {
             Icon(
               imageVector = Icons.Default.Edit,
-              contentDescription = stringResource(Res.string.widget_screen_edit_name),
+              contentDescription = stringResource(Res.string.countdown_editor_screen_edit_name),
             )
           }
         },
@@ -123,7 +119,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           IconButton(onClick = navigateBack) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = stringResource(Res.string.widget_screen_go_back),
+              contentDescription = stringResource(Res.string.countdown_editor_screen_go_back),
             )
           }
         },
@@ -231,7 +227,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
           val sheetChildModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
 
           Text(
-            stringResource(Res.string.widget_screen_enter_custom_name),
+            stringResource(Res.string.countdown_editor_screen_enter_custom_name),
             style = MaterialTheme.typography.titleLargeEmphasized,
             modifier = sheetChildModifier,
           )
@@ -242,7 +238,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
             modifier = sheetChildModifier,
             value = state.targetName.orEmpty(),
             onValueChange = { state.targetName = it },
-            label = { Text(stringResource(Res.string.widget_screen_target_name)) },
+            label = { Text(stringResource(Res.string.countdown_editor_screen_target_name)) },
           )
 
           SheetVerticalSpacer()
@@ -279,7 +275,7 @@ fun WidgetScreen(onConfirmClick: (Countdown) -> Unit, navigateBack: () -> Unit) 
 private fun DayToggleButton(
   day: CalendarDay,
   today: LocalDate,
-  state: WidgetScreenState,
+  state: CountdownEditorScreenState,
   modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit,
 ) {
@@ -324,7 +320,7 @@ private fun MonthHeader(calendarMonth: CalendarMonth) {
 @Composable
 private fun DayOfWeekToggleButtons(
   daysOfWeek: List<DayOfWeek>,
-  state: WidgetScreenState,
+  state: CountdownEditorScreenState,
   modifier: Modifier = Modifier,
 ) {
   Row(modifier = modifier) {
@@ -368,6 +364,6 @@ private fun ToggleButtonText(text: String, color: Color, modifier: Modifier = Mo
 
 @Preview(showBackground = true)
 @Composable
-private fun WidgetScreenPreview() {
-  WidgetScreen(onConfirmClick = {}, navigateBack = {})
+private fun CountdownEditorScreenPreview() {
+  CountdownEditorScreen(onConfirmClick = {}, navigateBack = {})
 }

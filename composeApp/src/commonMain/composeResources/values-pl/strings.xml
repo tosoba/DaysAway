@@ -1,27 +1,28 @@
 <resources>
-    <string name="home_screen_title">DaysAway</string>
-    <string name="add_widget">Dodaj widget</string>
-    <string name="widget_screen_confirm_target_date">Potwierdź datę docelową</string>
-    <string name="widget_screen_choose_target_date">Wybierz datę docelową</string>
-    <string name="widget_screen_edit_name">Edytuj nazwę</string>
-    <string name="widget_screen_go_back">Wróć</string>
+    <string name="add_countdown">Dodaj odliczanie</string>
     <string name="reset">Resetuj</string>
     <string name="refresh">Odśwież</string>
     <string name="confirm">Potwierdź</string>
-    <string name="widget_screen_enter_custom_name">Wprowadź własną nazwę celu odliczania</string>
-    <string name="widget_screen_target_name">Nazwa celu</string>
     <string name="cancel">Anuluj</string>
 
-    <plurals name="widget_screen_days_remaining_description">
+    <string name="home_screen_title">DaysAway</string>
+    <string name="home_screen_no_widgets_added">Nie dodano jeszcze żadnych odliczań.</string>
+    <string name="home_screen_no_widgets_create_one">Utwórz odliczanie za pomocą przycisku poniżej.</string>
+
+    <string name="countdown_editor_screen_confirm_target_date">Potwierdź datę docelową</string>
+    <string name="countdown_editor_screen_choose_target_date">Wybierz datę docelową</string>
+    <string name="countdown_editor_screen_edit_name">Edytuj nazwę</string>
+    <string name="countdown_editor_screen_go_back">Wróć</string>
+    <string name="countdown_editor_screen_enter_custom_name">Wprowadź własną nazwę celu odliczania</string>
+    <string name="countdown_editor_screen_target_name">Nazwa celu</string>
+    <plurals name="countdown_editor_screen_days_remaining_description">
         <item quantity="one">Pozostał %1$d dzień do %2$s</item>
         <item quantity="few">Pozostały %1$d dni do %2$s</item>
         <item quantity="many">Pozostało %1$d dni do %2$s</item>
         <item quantity="other">Pozostało %1$d dni do %2$s</item>
     </plurals>
-    <string name="widget_screen_no_target_date_chosen">Nie wybrano daty docelowej</string>
-    <string name="widget_screen_description_for"> dla %s</string>
-    <string name="home_screen_no_widgets_added">Nie dodano jeszcze żadnych widgetów.</string>
-    <string name="home_screen_no_widgets_create_one">Utwórz widget za pomocą przycisku poniżej.</string>
+    <string name="countdown_editor_screen_no_target_date_chosen">Nie wybrano daty docelowej</string>
+    <string name="countdown_editor_screen_description_for"> dla %s</string>
 
     <string name="countdown_widget_no_target_chosen">Nie wybrano celu</string>
     <plurals name="countdown_widget_days">

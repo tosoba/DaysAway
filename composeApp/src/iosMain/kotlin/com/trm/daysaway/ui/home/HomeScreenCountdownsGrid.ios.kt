@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-actual fun HomeScreenWidgetsGrid(
+actual fun HomeScreenCountdownsGrid(
   state: HomeScreenState,
   contentPadding: PaddingValues,
   modifier: Modifier,
