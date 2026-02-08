@@ -1,4 +1,4 @@
-package com.trm.daysaway.core.ui.util
+package com.trm.daysaway.core.base.util
 
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
