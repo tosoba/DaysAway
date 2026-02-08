@@ -13,7 +13,7 @@ import com.trm.daysaway.widget.countdown.CountdownWidgetState
 import com.trm.daysaway.widget.countdown.countdownWidgetPinnedCallback
 import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent
 
-actual class DeviceWidgetManager(private val context: Context) : WidgetManager {
+class DeviceWidgetManager(private val context: Context) : WidgetManager {
   override suspend fun addCountdownWidget(countdown: Countdown) {
     GlanceAppWidgetManager(context)
       .requestPinGlanceAppWidget(
