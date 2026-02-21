@@ -4,7 +4,7 @@ import SwiftUI
 import UIKit
 
 struct ComposeView: UIViewControllerRepresentable {
-    @Query(sort: \CountdownModel.targetDate, order: .reverse) private var countdowns: [CountdownModel]
+    @Query(sort: \CountdownModel.targetDate) private var countdowns: [CountdownModel]
 
     @StateObject private var holder: ComposeAppState
 
