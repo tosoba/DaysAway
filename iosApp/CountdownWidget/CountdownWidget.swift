@@ -1,81 +1,109 @@
+import AppIntents
+import SwiftData
 import SwiftUI
 import WidgetKit
 
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in _: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
-    }
-
-    func snapshot(for configuration: ConfigurationAppIntent, in _: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-
-    func timeline(for configuration: ConfigurationAppIntent, in _: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
-
-        return Timeline(entries: entries, policy: .atEnd)
-    }
-
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
-}
-
-struct SimpleEntry: TimelineEntry {
-    let date: Date
-    let configuration: ConfigurationAppIntent
-}
-
-struct CountdownWidgetEntryView: View {
-    var entry: Provider.Entry
-
-    var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
-        }
-    }
-}
-
+@main
 struct CountdownWidget: Widget {
-    let kind: String = "CountdownWidget"
+    let kind = "CountdownWidget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            CountdownWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+        AppIntentConfiguration(
+            kind: kind,
+            intent: CountdownWidgetConfigurationIntent.self,
+            provider: CountdownTimelineProvider()
+        ) { entry in
+            CountdownWidgetView(entry: entry)
         }
+        .configurationDisplayName("Days Away")
+        .description("Counts down to your selected event.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
-private extension ConfigurationAppIntent {
-    static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
+struct CountdownWidgetView: View {
+    let entry: CountdownEntry
 
-    static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
+    var body: some View {
+        VStack(alignment: .center, spacing: 4) {
+            if !entry.wasReached {
+                Text("\(entry.daysRemaining) \(entry.daysRemaining == 1 ? "day" : "days")")
+                    .font(.title2).bold()
+                Text("remaining until")
+                    .font(.caption)
+                Text("\(entry.targetName ?? entry.targetDate.shortDateString).")
+                    .font(.subheadline)
+            } else if let name = entry.targetName, !name.isEmpty {
+                Text(name)
+                    .font(.subheadline)
+                Text("was reached on")
+                    .font(.caption)
+                Text("\(entry.targetDate.shortDateString).")
+                    .font(.subheadline)
+            } else {
+                Text(entry.targetDate.shortDateString)
+                    .font(.subheadline)
+                Text("was reached")
+                    .font(.caption)
+            }
+        }
+        .multilineTextAlignment(.center)
+        .padding()
+        .containerBackground(.fill.tertiary, for: .widget)
     }
 }
 
-#Preview(as: .systemSmall) {
-    CountdownWidget()
-} timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
+struct CountdownEntry: TimelineEntry {
+    let date: Date
+    let daysRemaining: Int
+    let targetName: String?
+    let targetDate: Date
+    let wasReached: Bool
+}
+
+struct CountdownTimelineProvider: AppIntentTimelineProvider {
+    typealias Intent = CountdownWidgetConfigurationIntent
+    typealias Entry = CountdownEntry
+
+    func placeholder(in _: Context) -> CountdownEntry {
+        CountdownEntry(date: .now, daysRemaining: 42, targetName: "My Event", targetDate: .now, wasReached: false)
+    }
+
+    func snapshot(for configuration: CountdownWidgetConfigurationIntent, in _: Context) async -> CountdownEntry {
+        makeEntry(for: configuration)
+    }
+
+    func timeline(for configuration: CountdownWidgetConfigurationIntent, in _: Context) async -> Timeline<CountdownEntry> {
+        let entry = makeEntry(for: configuration)
+        let midnight = Calendar.current.nextDate(
+            after: .now,
+            matching: DateComponents(hour: 0, minute: 0, second: 0),
+            matchingPolicy: .nextTime
+        )!
+        return Timeline(entries: [entry], policy: .after(midnight))
+    }
+
+    private func makeEntry(for configuration: CountdownWidgetConfigurationIntent) -> CountdownEntry {
+        guard let selected = configuration.countdown else {
+            return CountdownEntry(date: .now, daysRemaining: 0, targetName: nil, targetDate: .now, wasReached: true)
+        }
+
+        let container = ModelContainer.shared
+        let context = ModelContext(container)
+        let id = selected.id
+        let model = try? context.fetch(
+            FetchDescriptor<CountdownModel>(predicate: #Predicate { $0.id == id })
+        ).first
+
+        let excludedDates = model?.excludedDates ?? []
+        let days = Date.now.daysRemaining(until: selected.targetDate, excluding: excludedDates)
+
+        return CountdownEntry(
+            date: .now,
+            daysRemaining: days,
+            targetName: selected.name,
+            targetDate: selected.targetDate,
+            wasReached: days == 0
+        )
+    }
 }

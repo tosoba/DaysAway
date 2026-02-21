@@ -52,6 +52,14 @@
 			);
 			target = 333B66762F38B7AC00B4EA55 /* CountdownWidgetExtension */;
 		};
+		3383361D2F49EFEF00F0FDD7 /* Exceptions for "iosApp" folder in "CountdownWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"ModelContainer+Extensions.swift",
+				Models/CountdownModel.swift,
+			);
+			target = 333B66762F38B7AC00B4EA55 /* CountdownWidgetExtension */;
+		};
 		E7E2053485659DE7173C1BFF /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -79,6 +87,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				E7E2053485659DE7173C1BFF /* Exceptions for "iosApp" folder in "iosApp" target */,
+				3383361D2F49EFEF00F0FDD7 /* Exceptions for "iosApp" folder in "CountdownWidgetExtension" target */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
