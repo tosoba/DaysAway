@@ -8,15 +8,15 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.trm.daysaway.core.base.util.popLast
 import com.trm.daysaway.core.base.util.pushIfLastNotEqualTo
-import com.trm.daysaway.domain.Countdown
-import com.trm.daysaway.ui.home.HomeScreen
-import com.trm.daysaway.ui.countdownEditor.CountdownEditorScreen
 import com.trm.daysaway.ui.countdownEditor.CountdownEditorConfirmationSuccessEffect
+import com.trm.daysaway.ui.countdownEditor.CountdownEditorScreen
+import com.trm.daysaway.ui.home.HomeScreen
+import com.trm.daysaway.ui.home.rememberHomeScreenState
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun App(onCountdownConfirmClick: (Countdown) -> Unit) {
+fun App(state: AppState) {
   val backStack =
     rememberNavBackStack(
       SavedStateConfiguration {
@@ -36,13 +36,16 @@ fun App(onCountdownConfirmClick: (Countdown) -> Unit) {
     entryProvider =
       entryProvider {
         entry<Home> {
-          HomeScreen(onAddWidgetClick = { backStack.pushIfLastNotEqualTo(CountdownEditor) })
+          HomeScreen(
+            state = rememberHomeScreenState(appState = state),
+            onAddWidgetClick = { backStack.pushIfLastNotEqualTo(CountdownEditor) },
+          )
         }
         entry<CountdownEditor> {
           CountdownEditorConfirmationSuccessEffect(action = backStack::popLast)
 
           CountdownEditorScreen(
-            onConfirmClick = onCountdownConfirmClick,
+            onConfirmClick = state.onCountdownConfirmClick,
             navigateBack = backStack::popLast,
           )
         }

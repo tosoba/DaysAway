@@ -4,12 +4,9 @@ import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +23,7 @@ import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 private const val WIDGET_HOST_ID = 1024
 
 @Composable
-actual fun HomeScreenCountdownsGrid(
+actual fun HomeScreenCountdowns(
   state: HomeScreenState,
   contentPadding: PaddingValues,
   modifier: Modifier,
@@ -52,13 +49,7 @@ actual fun HomeScreenCountdownsGrid(
         bottom = { Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding())) },
       )
     } else {
-      LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 150.dp),
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = contentPadding,
-      ) {
+      HomeScreenCountdownsLazyVerticalGrid(modifier = modifier, contentPadding = contentPadding) {
         items(state.widgetIds, key = { widgetId -> "${state.refreshCount}-$widgetId" }) { widgetId
           ->
           AndroidView(

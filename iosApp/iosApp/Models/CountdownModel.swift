@@ -9,12 +9,12 @@ final class CountdownModel {
 
     var targetDate: Date
     var targetName: String?
-    var excludededDates: [Date]
+    var excludedDates: [Date]
 
-    init(targetDate: Date, targetName: String?, excludededDates: [Date]) {
+    init(targetDate: Date, targetName: String?, excludedDates: [Date]) {
         self.targetDate = targetDate
         self.targetName = targetName
-        self.excludededDates = excludededDates
+        self.excludedDates = excludedDates
     }
 }
 
@@ -23,7 +23,7 @@ extension CountdownModel {
         self.init(
             targetDate: DateTimeExtensionsKt.localDateToNSDate(date: countdown.targetDate),
             targetName: countdown.targetName,
-            excludededDates: countdown.excludedDates.map { date in DateTimeExtensionsKt.localDateToNSDate(date: date) }
+            excludedDates: countdown.excludedDates.map { date in DateTimeExtensionsKt.localDateToNSDate(date: date) }
         )
     }
 }

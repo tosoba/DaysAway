@@ -9,9 +9,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.trm.daysaway.ui.App
+import com.trm.daysaway.ui.AppState
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -26,9 +28,16 @@ class MainActivity : ComponentActivity() {
       ) {
         val scope = rememberCoroutineScope()
         App(
-          onCountdownConfirmClick = {
-            scope.launch { ((application as DaysAwayApp).widgetManager).addCountdownWidget(it) }
-          }
+          state =
+            remember {
+              AppState(
+                onCountdownConfirmClick = {
+                  scope.launch {
+                    ((application as DaysAwayApp).widgetManager).addCountdownWidget(it)
+                  }
+                }
+              )
+            }
         )
       }
     }

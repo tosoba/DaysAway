@@ -3,10 +3,14 @@ package com.trm.daysaway.ui.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.trm.daysaway.core.base.PlatformContext
+import com.trm.daysaway.domain.Countdown
+import com.trm.daysaway.ui.AppState
 
-actual class HomeScreenState {
+actual class HomeScreenState(val countdowns: List<Countdown>) {
   actual fun refresh(context: PlatformContext) = Unit
 }
 
 @Composable
-actual fun rememberHomeScreenState(vararg inputs: Any?) = remember(inputs) { HomeScreenState() }
+actual fun rememberHomeScreenState(appState: AppState) = remember {
+  HomeScreenState(appState.countdowns)
+}

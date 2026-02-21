@@ -28,9 +28,8 @@ import daysaway.composeapp.generated.resources.refresh
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun HomeScreen(onAddWidgetClick: () -> Unit) {
+fun HomeScreen(state: HomeScreenState, onAddWidgetClick: () -> Unit) {
   val context = platformContext()
-  val state = rememberHomeScreenState()
 
   Scaffold(
     topBar = {
@@ -55,7 +54,7 @@ fun HomeScreen(onAddWidgetClick: () -> Unit) {
       )
     },
   ) { contentPadding ->
-    HomeScreenCountdownsGrid(
+    HomeScreenCountdowns(
       state = state,
       contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 112.dp),
       modifier = Modifier.fillMaxSize().padding(contentPadding),

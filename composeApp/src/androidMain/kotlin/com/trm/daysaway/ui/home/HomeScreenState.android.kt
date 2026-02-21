@@ -17,6 +17,7 @@ import com.trm.daysaway.core.base.PlatformContext
 import com.trm.daysaway.core.base.platformContext
 import com.trm.daysaway.core.base.util.getAllWidgetIds
 import com.trm.daysaway.core.base.util.getLastWidgetId
+import com.trm.daysaway.ui.AppState
 import com.trm.daysaway.widget.countdown.CountdownWidgetReceiver
 
 @Stable
@@ -54,10 +55,9 @@ actual class HomeScreenState(refreshCount: Int, initialWidgetIds: List<Int>) {
 }
 
 @Composable
-actual fun rememberHomeScreenState(vararg inputs: Any?): HomeScreenState {
+actual fun rememberHomeScreenState(appState: AppState): HomeScreenState {
   val context = platformContext()
-  val state =
-    rememberSaveable(inputs, saver = HomeScreenState.Saver, init = { HomeScreenState(context) })
+  val state = rememberSaveable(saver = HomeScreenState.Saver, init = { HomeScreenState(context) })
 
   DisposableEffect(Unit) {
     fun onFileEvent(event: Int, path: String?) {
