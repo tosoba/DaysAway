@@ -11,6 +11,5 @@ actual class HomeScreenState(val countdowns: List<Countdown>) {
 }
 
 @Composable
-actual fun rememberHomeScreenState(appState: AppState) = remember {
-  HomeScreenState(appState.countdowns)
-}
+actual fun rememberHomeScreenState(appState: AppState) =
+  remember(appState.countdowns) { HomeScreenState(appState.countdowns) }

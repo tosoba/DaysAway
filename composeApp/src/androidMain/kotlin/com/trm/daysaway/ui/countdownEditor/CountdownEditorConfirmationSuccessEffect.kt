@@ -10,7 +10,7 @@ import com.trm.daysaway.widget.countdown.toCountdown
 import com.trm.daysaway.widget.countdown.updateCountdownWidgetIntent
 
 @Composable
-actual fun CountdownEditorConfirmationSuccessEffect(action: () -> Unit) {
+fun CountdownEditorConfirmationSuccessEffect(action: () -> Unit) {
   BroadcastReceiverEffect(intentFilter = IntentFilter(WIDGET_PIN_SUCCESS_ACTION)) { context, intent
     ->
     context.sendBroadcast(
