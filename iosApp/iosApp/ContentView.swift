@@ -3,8 +3,14 @@ import SwiftUI
 import UIKit
 
 struct ComposeView: UIViewControllerRepresentable {
+    @Environment(\.modelContext) private var context
+
     func makeUIViewController(context _: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        MainViewControllerKt.mainViewController(
+            onCountdownConfirmClick: { countdown in
+                context.insert(CountdownModel(countdown))
+            }
+        )
     }
 
     func updateUIViewController(_: UIViewController, context _: Context) {}
