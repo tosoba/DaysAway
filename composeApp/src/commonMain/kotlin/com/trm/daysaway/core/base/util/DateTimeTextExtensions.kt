@@ -3,6 +3,7 @@ package com.trm.daysaway.core.base.util
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.YearMonth
 
@@ -19,3 +20,6 @@ fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): 
 expect fun Month.getDisplayName(short: Boolean, locale: Locale): String
 
 expect fun DayOfWeek.getDisplayName(narrow: Boolean = false, locale: Locale): String
+
+fun LocalDate.getDaysRemainingUntil(targetDate: LocalDate, excludedDates: List<LocalDate>): Long =
+  targetDate.toEpochDays() - this.toEpochDays() - excludedDates.count { it >= this }

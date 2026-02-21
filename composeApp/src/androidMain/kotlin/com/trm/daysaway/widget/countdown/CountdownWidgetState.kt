@@ -4,12 +4,13 @@ package com.trm.daysaway.widget.countdown
 
 import com.kizitonwose.calendar.core.now
 import com.trm.daysaway.core.base.LocalDateListSerializer
+import com.trm.daysaway.core.base.util.getDaysRemainingUntil
 import com.trm.daysaway.domain.Countdown
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.serializers.LocalDateIso8601Serializer
 import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
 
 @Serializable
 sealed interface CountdownWidgetState {
@@ -28,7 +29,7 @@ sealed interface CountdownWidgetState {
       get() = targetDate.format(LocalDate.Formats.ISO)
 
     fun getDaysRemaining(fromDate: LocalDate = LocalDate.now()): Long =
-      targetDate.toEpochDays() - fromDate.toEpochDays() - excludedDates.count { it >= fromDate }
+      fromDate.getDaysRemainingUntil(targetDate, excludedDates)
 
     constructor(
       countdown: Countdown
