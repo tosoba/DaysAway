@@ -15,7 +15,7 @@ struct CountdownWidget: Widget {
         ) { entry in
             CountdownWidgetView(entry: entry)
         }
-        .configurationDisplayName("Days Away")
+        .configurationDisplayName("DaysAway")
         .description("Counts down to your selected event.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
@@ -26,25 +26,32 @@ struct CountdownWidgetView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
-            if !entry.wasReached {
-                Text("\(entry.daysRemaining) \(entry.daysRemaining == 1 ? "day" : "days")")
-                    .font(.title2).bold()
-                Text("remaining until")
-                    .font(.caption)
-                Text("\(entry.targetName ?? entry.targetDate.shortDateString).")
+            switch entry.content {
+            case .unconfigured:
+                Text("Configure widget to select a countdown.")
                     .font(.subheadline)
-            } else if let name = entry.targetName, !name.isEmpty {
-                Text(name)
-                    .font(.subheadline)
-                Text("was reached on")
-                    .font(.caption)
-                Text("\(entry.targetDate.shortDateString).")
-                    .font(.subheadline)
-            } else {
-                Text(entry.targetDate.shortDateString)
-                    .font(.subheadline)
-                Text("was reached")
-                    .font(.caption)
+                    .multilineTextAlignment(.center)
+            case let .countdown(daysRemaining, targetName, targetDate, wasReached):
+                if !wasReached {
+                    Text("\(daysRemaining) \(daysRemaining == 1 ? "day" : "days")")
+                        .font(.title2).bold()
+                    Text("remaining until")
+                        .font(.caption)
+                    Text("\(targetName ?? targetDate.shortDateString).")
+                        .font(.subheadline)
+                } else if let name = targetName, !name.isEmpty {
+                    Text(name)
+                        .font(.subheadline)
+                    Text("was reached on")
+                        .font(.caption)
+                    Text("\(targetDate.shortDateString).")
+                        .font(.subheadline)
+                } else {
+                    Text(targetDate.shortDateString)
+                        .font(.subheadline)
+                    Text("was reached")
+                        .font(.caption)
+                }
             }
         }
         .multilineTextAlignment(.center)
@@ -53,24 +60,28 @@ struct CountdownWidgetView: View {
     }
 }
 
+enum CountdownEntryContent {
+    case unconfigured
+    case countdown(daysRemaining: Int, targetName: String?, targetDate: Date, wasReached: Bool)
+}
+
 struct CountdownEntry: TimelineEntry {
     let date: Date
-    let daysRemaining: Int
-    let targetName: String?
-    let targetDate: Date
-    let wasReached: Bool
+    let content: CountdownEntryContent
 }
 
 struct CountdownTimelineProvider: AppIntentTimelineProvider {
     typealias Intent = CountdownWidgetConfigurationIntent
     typealias Entry = CountdownEntry
-
-    func placeholder(in _: Context) -> CountdownEntry {
-        CountdownEntry(date: .now, daysRemaining: 42, targetName: "My Event", targetDate: .now, wasReached: false)
-    }
+    
+    private static let placeholderEntry = CountdownEntry(
+        date: .now,
+        content: .countdown(daysRemaining: 42, targetName: "My Event", targetDate: .now, wasReached: false)
+    )
 
     func snapshot(for configuration: CountdownWidgetConfigurationIntent, in _: Context) async -> CountdownEntry {
-        makeEntry(for: configuration)
+        guard configuration.countdown != nil else { return Self.placeholderEntry }
+        return makeEntry(for: configuration)
     }
 
     func timeline(for configuration: CountdownWidgetConfigurationIntent, in _: Context) async -> Timeline<CountdownEntry> {
@@ -83,13 +94,16 @@ struct CountdownTimelineProvider: AppIntentTimelineProvider {
         return Timeline(entries: [entry], policy: .after(midnight))
     }
 
+    func placeholder(in _: Context) -> CountdownEntry {
+        Self.placeholderEntry
+    }
+
     private func makeEntry(for configuration: CountdownWidgetConfigurationIntent) -> CountdownEntry {
         guard let selected = configuration.countdown else {
-            return CountdownEntry(date: .now, daysRemaining: 0, targetName: nil, targetDate: .now, wasReached: true)
+            return CountdownEntry(date: .now, content: .unconfigured)
         }
 
-        let container = ModelContainer.shared
-        let context = ModelContext(container)
+        let context = ModelContext(ModelContainer.shared)
         let id = selected.id
         let model = try? context.fetch(
             FetchDescriptor<CountdownModel>(predicate: #Predicate { $0.id == id })
@@ -100,10 +114,12 @@ struct CountdownTimelineProvider: AppIntentTimelineProvider {
 
         return CountdownEntry(
             date: .now,
-            daysRemaining: days,
-            targetName: selected.name,
-            targetDate: selected.targetDate,
-            wasReached: days == 0
+            content: .countdown(
+                daysRemaining: days,
+                targetName: selected.name,
+                targetDate: selected.targetDate,
+                wasReached: days == 0
+            )
         )
     }
 }
