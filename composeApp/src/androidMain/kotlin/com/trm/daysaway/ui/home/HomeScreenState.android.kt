@@ -38,7 +38,7 @@ actual class HomeScreenState(refreshCount: Int, initialWidgetIds: List<Int>) {
 
   companion object {
     val Saver =
-      listSaver<HomeScreenState, Int>(
+      listSaver(
         save = { state ->
           buildList {
             add(state.refreshCount)
